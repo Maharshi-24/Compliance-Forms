@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { serveStatic } from '@hono/node-server/serve-static';
+import { cors } from 'hono/cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import db from './database.js';
@@ -9,6 +10,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = new Hono();
+
+// Enable CORS
+app.use('/*', cors());  
 
 // Serve static files from the frontend directory
 app.use('/*', serveStatic({ root: path.join(__dirname, '..', 'frontend') }));
@@ -25,12 +29,36 @@ app.get('/', async (c) => {
   }
 });
 
+app.get('/styles.css', async (c) => {
+    try {
+      const filePath = path.join(__dirname, '..', 'frontend', 'styles.css');
+      const content = await fs.readFile(filePath, 'utf-8');
+      return c.header('Content-Type', 'text/css').body(content);
+    } catch (error) {
+      console.error('Error serving styles.css:', error);
+      return c.text('Error serving the stylesheet', 500);
+    }
+  });
+
+// Route to handle individual form pages
+app.get('/forms/:formName', async (c) => {
+  const formName = c.req.param('formName');
+  try {
+    const filePath = path.join(__dirname, '..', 'frontend', 'forms', formName);
+    const content = await fs.readFile(filePath, 'utf-8');
+    return c.html(content);
+  } catch (error) {
+    console.error(`Error serving ${formName}:`, error);
+    return c.text('Form not found', 404);
+  }
+});
+
 // API to handle form submissions
 app.post('/submit-form', async (c) => {
-    const { formName, formData } = await c.req.json();
-    let query = '';
-
     try {
+        const { formName, formData } = await c.req.json();
+        console.log('Received form submission:', formName, formData);
+        let query = '';
         switch (formName) {
             case 'Information Security Policy Review':
                 query = `
@@ -302,7 +330,8 @@ app.post('/submit-form', async (c) => {
             default:
                 return c.json({ error: 'Invalid form name' }, 400);
         }
-
+        
+        console.log('Form data inserted successfully');
         return c.json({ success: true });
 
     } catch (error) {

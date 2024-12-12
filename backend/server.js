@@ -22,7 +22,7 @@ app.onError((err, c) => {
   return c.text('Internal Server Error', 500);
 });
 
-console.log(`Server is running on port localhost:${port}`)
+console.log(`Server is running on http://localhost:${port}`)
 
 serve({
   fetch: app.fetch,
