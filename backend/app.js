@@ -1,8 +1,9 @@
 import { Hono } from 'hono';
-import { serveStatic } from 'hono/serve-static';
+import { serveStatic } from '@hono/node-server/serve-static';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import db from './database.js';
+import fs from 'fs/promises';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,14 +11,18 @@ const __dirname = path.dirname(__filename);
 const app = new Hono();
 
 // Serve static files from the frontend directory
-app.use('*', serveStatic({ root: './frontend' }));
-
+app.use('/*', serveStatic({ root: path.join(__dirname, '..', 'frontend') }));
 
 // Route to home page
-app.get('/', (c) => {
-    return c.html(serveStatic({ 
-        path: path.join(__dirname, 'frontend\index.html') 
-    }));
+app.get('/', async (c) => {
+  try {
+    const filePath = path.join(__dirname, '..', 'frontend', 'index.html');
+    const content = await fs.readFile(filePath, 'utf-8');
+    return c.html(content);
+  } catch (error) {
+    console.error('Error serving index.html:', error);
+    return c.text('Error serving the page', 500);
+  }
 });
 
 // API to handle form submissions
@@ -301,6 +306,7 @@ app.post('/submit-form', async (c) => {
         return c.json({ success: true });
 
     } catch (error) {
+        console.error('Error in form submission:', error);
         return c.json({ error: error.message }, 500);
     }
 });
