@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operations Security</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <h1>Operations Security</h1>
+    <form id="form8">
+        <label>Date: <input type="date" name="date" required></label>
+        <label>System/Application: <input type="text" name="system_application" required></label>
+        <label>Activity Description: <textarea name="activity_description" required></textarea></label>
+        <label>Performed By: <input type="text" name="performed_by" required></label>
+        <label>Actions Taken: <textarea name="actions_taken" required></textarea></label>
+        <label>Review Outcome: 
+            <select name="review_outcome" required>
+                <option value="Successful">Successful</option>
+                <option value="Needs Improvement">Needs Improvement</option>
+                <option value="Failed">Failed</option>
+            </select>
+        </label>
+        <label>Comments: <textarea name="comments"></textarea></label>
+        <label>Escalation Contact: <input type="text" name="escalation_contact"></label>
+        <label>Downtime Log: <textarea name="downtime_log"></textarea></label>
+        <button type="submit">Submit</button>
+    </form>
+    <script>
+        document.getElementById('form8').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            try {
+                const response = await fetch('/submit-form', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ formName: 'Operations Security', formData: data }),
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('Form submitted successfully!');
+                    e.target.reset();
+                } else {
+                    alert('Error submitting form');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while submitting the form');
+            }
+        });
+    </script>
+</body>
+</html>

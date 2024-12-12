@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physical Security</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <h1>Physical Security</h1>
+    <form id="form7">
+        <label>Location: <input type="text" name="location" required></label>
+        <label>Date of Inspection: <input type="date" name="date_of_inspection" required></label>
+        <label>Physical Barriers: 
+            <select name="physical_barriers" required>
+                <option value="Adequate">Adequate</option>
+                <option value="Needs Improvement">Needs Improvement</option>
+                <option value="Insufficient">Insufficient</option>
+            </select>
+        </label>
+        <label>Entry Control Systems: 
+            <select name="entry_control_systems" required>
+                <option value="Keycard">Keycard</option>
+                <option value="Biometric">Biometric</option>
+                <option value="Security Guard">Security Guard</option>
+                <option value="Multiple Methods">Multiple Methods</option>
+            </select>
+        </label>
+        <label>Secure Storage Areas: 
+            <select name="secure_storage_areas" required>
+                <option value="Locked Cabinets">Locked Cabinets</option>
+                <option value="Secure Room">Secure Room</option>
+                <option value="Access Controlled">Access Controlled</option>
+            </select>
+        </label>
+        <label>Fire Protection Systems: 
+            <select name="fire_protection_systems" required>
+                <option value="Smoke Detectors">Smoke Detectors</option>
+                <option value="Fire Extinguishers">Fire Extinguishers</option>
+                <option value="Sprinkler System">Sprinkler System</option>
+            </select>
+        </label>
+        <label>Alarm Systems: 
+            <select name="alarm_systems" required>
+                <option value="Intrusion Alarm">Intrusion Alarm</option>
+                <option value="Motion Sensors">Motion Sensors</option>
+                <option value="24/7 Monitoring">24/7 Monitoring</option>
+            </select>
+        </label>
+        <label>Comments: <textarea name="comments"></textarea></label>
+        <label>Inspection Frequency: 
+            <select name="inspection_frequency" required>
+                <option value="Monthly">Monthly</option>
+                <option value="Quarterly">Quarterly</option>
+                <option value="Bi-Annually">Bi-Annually</option>
+                <option value="Annually">Annually</option>
+            </select>
+        </label>
+        <label>Access Approval Authority: <input type="text" name="access_approval_authority" required></label>
+        <button type="submit">Submit</button>
+    </form>
+    <script>
+        document.getElementById('form7').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            try {
+                const response = await fetch('/submit-form', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ formName: 'Physical Security', formData: data }),
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('Form submitted successfully!');
+                    e.target.reset();
+                } else {
+                    alert('Error submitting form');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while submitting the form');
+            }
+        });
+    </script>
+</body>
+</html>

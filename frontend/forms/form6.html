@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptographic Controls</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <h1>Cryptographic Controls</h1>
+    <form id="form6">
+        <label>Control Type: 
+            <select name="control_type" required>
+                <option value="Encryption">Encryption</option>
+                <option value="Key Management">Key Management</option>
+                <option value="Digital Signatures">Digital Signatures</option>
+            </select>
+        </label>
+        <label>System/Application: <input type="text" name="system_application" required></label>
+        <label>Purpose: <textarea name="purpose" required></textarea></label>
+        <label>Implementation Date: <input type="date" name="implementation_date" required></label>
+        <label>Key Management Process: <textarea name="key_management_process"></textarea></label>
+        <label>Key Expiration Date: <input type="date" name="key_expiration_date"></label>
+        <label>Comments: <textarea name="comments"></textarea></label>
+        <label>Key Backup Location: <input type="text" name="key_backup_location"></label>
+        <label>Algorithm: 
+            <select name="algorithm" required>
+                <option value="AES">AES</option>
+                <option value="RSA">RSA</option>
+                <option value="SHA-256">SHA-256</option>
+                <option value="ECC">ECC</option>
+            </select>
+        </label>
+        <button type="submit">Submit</button>
+    </form>
+    <script>
+        document.getElementById('form6').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            try {
+                const response = await fetch('/submit-form', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ formName: 'Cryptographic Controls', formData: data }),
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('Form submitted successfully!');
+                    e.target.reset();
+                } else {
+                    alert('Error submitting form');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while submitting the form');
+            }
+        });
+    </script>
+</body>
+</html>

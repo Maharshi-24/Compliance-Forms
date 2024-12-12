@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Information Security Roles</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <h1>Information Security Roles</h1>
+    <form id="form2">
+        <label>Role: <input type="text" name="role" required></label>
+        <label>Responsible Person: <input type="text" name="responsible_person" required></label>
+        <label>Security Responsibilities: <textarea name="security_responsibilities" required></textarea></label>
+        <label>Date Assigned: <input type="date" name="date_assigned" required></label>
+        <label>Review Frequency: <input type="text" name="review_frequency" required></label>
+        <label>Comments: <textarea name="comments"></textarea></label>
+        <button type="submit">Submit</button>
+    </form>
+    <script>
+        document.getElementById('form2').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            try {
+                const response = await fetch('/submit-form', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ formName: 'Information Security Roles', formData: data }),
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('Form submitted successfully!');
+                    e.target.reset();
+                } else {
+                    alert('Error submitting form');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while submitting the form');
+            }
+        });
+    </script>
+</body>
+</html>

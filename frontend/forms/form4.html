@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Management</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <h1>Asset Management</h1>
+    <form id="form4">
+        <label>Asset ID: <input type="text" name="asset_id" required></label>
+        <label>Asset Type: <input type="text" name="asset_type" required></label>
+        <label>Owner: <input type="text" name="owner" required></label>
+        <label>Classification: 
+            <select name="classification" required>
+                <option value="Public">Public</option>
+                <option value="Internal">Internal</option>
+                <option value="Confidential">Confidential</option>
+                <option value="Restricted">Restricted</option>
+            </select>
+        </label>
+        <label>Location: <input type="text" name="location" required></label>
+        <label>Date Added: <input type="date" name="date_added" required></label>
+        <label>End of Life: <input type="date" name="end_of_life"></label>
+        <label>Status: 
+            <select name="status" required>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="Maintenance">Maintenance</option>
+                <option value="Disposal">Disposal</option>
+            </select>
+        </label>
+        <label>Comments: <textarea name="comments"></textarea></label>
+        <button type="submit">Submit</button>
+    </form>
+    <script>
+        document.getElementById('form4').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            try {
+                const response = await fetch('/submit-form', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ formName: 'Asset Management', formData: data }),
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('Form submitted successfully!');
+                    e.target.reset();
+                } else {
+                    alert('Error submitting form');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while submitting the form');
+            }
+        });
+    </script>
+</body>
+</html>
