@@ -1,7 +1,7 @@
 import { serve } from '@hono/node-server'
 import app from './app.js'
 
-const port = 3000
+const port = 2406
 
 app.use('*', async (c, next) => {
   console.log(`${c.req.method} ${c.req.url}`)
