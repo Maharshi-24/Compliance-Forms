@@ -20,7 +20,9 @@
             </div>
             <div class="form-group">
                 <label for="position">Position:</label>
-                <input type="text" id="position" name="position" required>
+                <select id="position" name="position" required>
+                    <option value="">Select a position</option>
+                </select>
             </div>
             <div class="form-group">
                 <label for="screening_date">Screening Date:</label>
@@ -54,6 +56,24 @@
         <div id="message" class="message" style="display: none;"></div>
     </div>
     <script>
+        async function fetchRoles() {
+            try {
+                const response = await fetch('/api/roles');
+                const roles = await response.json();
+                const roleSelect = document.querySelector('select[name="position"]');
+                roles.forEach(role => {
+                    const option = document.createElement('option');
+                    option.value = role.role_name;
+                    option.textContent = role.role_name;
+                    roleSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error fetching roles:', error);
+            }
+        }
+
+        fetchRoles();
+
         document.getElementById('form3').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);

@@ -47,8 +47,12 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="access_dates">Access Dates:</label>
-                <input type="text" id="access_dates" name="access_dates" placeholder="e.g., 2024-01-01 to 2024-12-31">
+                <label for="access_start_date">Access Start Date:</label>
+                <input type="date" id="access_start_date" name="access_start_date" required>
+            </div>
+            <div class="form-group">
+                <label for="access_end_date">Access End Date:</label>
+                <input type="date" id="access_end_date" name="access_end_date" required>
             </div>
             <div class="form-group">
                 <label for="comments">Comments:</label>
@@ -74,6 +78,12 @@
             e.preventDefault();
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData.entries());
+            
+            // Combine start and end dates into a single string
+            data.access_dates = `${data.access_start_date} to ${data.access_end_date}`;
+            delete data.access_start_date;
+            delete data.access_end_date;
+
             const messageElement = document.getElementById('message');
 
             try {
