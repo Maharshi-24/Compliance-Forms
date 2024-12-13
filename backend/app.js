@@ -11,20 +11,17 @@ const __dirname = path.dirname(__filename);
 
 const app = new Hono();
 
-// Enable CORS
 app.use('/*', cors());  
 
-// Serve static files from the frontend directory
 app.use('/*', serveStatic({ root: path.join(__dirname, '..', 'frontend') }));
 
-// Route to home page
 app.get('/', async (c) => {
   try {
     const filePath = path.join(__dirname, '..', 'frontend', 'index.html');
     const content = await fs.readFile(filePath, 'utf-8');
     return c.html(content);
   } catch (error) {
-    console.error('Error serving index.html:', error);
+    console.error('Error serving index.html:', error);   
     return c.text('Error serving the page', 500);
   }
 });
@@ -40,7 +37,6 @@ app.get('/styles.css', async (c) => {
     }
   });
 
-// Route to handle individual form pages
 app.get('/forms/:formName', async (c) => {
   const formName = c.req.param('formName');
   try {
@@ -53,7 +49,6 @@ app.get('/forms/:formName', async (c) => {
   }
 });
 
-// API to handle form submissions
 app.post('/submit-form', async (c) => {
     try {
         const { formName, formData } = await c.req.json();
