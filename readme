@@ -1,0 +1,24 @@
+Run in termial:
+npm init
+npm install @hono/node-server better-sqlite3 hono xlsx nodemon
+
+Paste this in package.json:
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js"
+  },
+
+There is a database.js file and it will automaticall create a database for this project. If there is a need to add more table then add the query fot that table in that db.exec().
+
+Form7 to Form 14 are left to do.
+
+Run in terminal:
+npm run dev
+
+Paste this in browser localhost:2406
+
+Technologies used:
+HTML, CSS, JAVASCRIPT, NODE.JS, HONO, SQLITE3
+
+To view tables open the forms.db file on this website:
+https://sqliteonline.com/
