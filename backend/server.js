@@ -3,17 +3,13 @@ import app from './app.js'
 
 const port = 3000
 
-app.onError((err, c) => {
-  console.error('Global error:', err)
-  return c.text('Internal Server Error', 500)
-})
-
 app.use('*', async (c, next) => {
   console.log(`${c.req.method} ${c.req.url}`)
   await next()
 })
 
 app.onError((err, c) => {
+  console.error('Global error:', err)
   console.error('Detailed error:', err);
   console.error('Error stack:', err.stack);
   return c.text('Internal Server Error', 500);

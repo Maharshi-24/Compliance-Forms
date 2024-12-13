@@ -26,16 +26,16 @@ app.get('/', async (c) => {
   }
 });
 
-app.get('/styles.css', async (c) => {
-    try {
-      const filePath = path.join(__dirname, '..', 'frontend', 'styles.css');
-      const content = await fs.readFile(filePath, 'utf-8');
-      return c.header('Content-Type', 'text/css').body(content);
-    } catch (error) {
-      console.error('Error serving styles.css:', error);
-      return c.text('Error serving the stylesheet', 500);
-    }
-  });
+// app.get('/styles.css', async (c) => {
+//     try {
+//       const filePath = path.join(__dirname, '..', 'frontend', 'styles.css');
+//       const content = await fs.readFile(filePath, 'utf-8');
+//       return c.header('Content-Type', 'text/css').body(content);
+//     } catch (error) {
+//       console.error('Error serving styles.css:', error);
+//       return c.text('Error serving the stylesheet', 500);
+//     }
+// });
 
 app.get('/forms/:formName', async (c) => {
   const formName = c.req.param('formName');
@@ -333,6 +333,16 @@ app.post('/submit-form', async (c) => {
         console.error('Error in form submission:', error);
         return c.json({ error: error.message }, 500);
     }
+});
+
+app.get('/api/roles', async (c) => {
+  try {
+    const roles = db.prepare('SELECT role_name FROM roles').all();
+    return c.json(roles);
+  } catch (error) {
+    console.error('Error fetching roles:', error);
+    return c.json({ error: 'Failed to fetch roles' }, 500);
+  }
 });
 
 export default app;

@@ -191,6 +191,27 @@ db.exec(`
         review_completed_by TEXT,
         internal_audit_date TEXT
     );
+
+    CREATE TABLE IF NOT EXISTS roles (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        role_name TEXT UNIQUE
+    );
+`);
+
+db.exec(`
+INSERT OR IGNORE INTO roles (role_name) VALUES
+    ('Chief Information Officer'),
+    ('Manager Application Development & Support'),
+    ('Manager Infrastructure'),
+    ('System Administrator'),
+    ('Network Administrator'),
+    ('Security Administrator'),
+    ('Business Analyst (non ENTERPRISE APPLICATION)'),
+    ('Business Analyst (ENTERPRISE APPLICATION)'),
+    ('System Analyst'),
+    ('IT Programmer'),
+    ('Application/ ENTERPRISE APPLICATION Admin'),
+    ('Database Admin');
 `);
 
 export default db;

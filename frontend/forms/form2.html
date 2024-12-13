@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Information Security Roles</title>
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
     <h1>Information Security Roles</h1>
     <form id="form2">
-        <label>Role: <input type="text" name="role" required></label>
+        <label>Role: 
+            <select name="role" required>
+                <option value="">Select a role</option>
+            </select>
+        </label>
         <label>Responsible Person: <input type="text" name="responsible_person" required></label>
         <label>Security Responsibilities: <textarea name="security_responsibilities" required></textarea></label>
         <label>Date Assigned: <input type="date" name="date_assigned" required></label>
@@ -18,6 +22,24 @@
         <button type="submit">Submit</button>
     </form>
     <script>
+        async function fetchRoles() {
+            try {
+                const response = await fetch('/api/roles');
+                const roles = await response.json();
+                const roleSelect = document.querySelector('select[name="role"]');
+                roles.forEach(role => {
+                    const option = document.createElement('option');
+                    option.value = role.role_name;
+                    option.textContent = role.role_name;
+                    roleSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error fetching roles:', error);
+            }
+        }
+
+        fetchRoles();
+
         document.getElementById('form2').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
@@ -43,3 +65,4 @@
     </script>
 </body>
 </html>
+
