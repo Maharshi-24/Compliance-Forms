@@ -7,7 +7,6 @@ const __dirname = path.dirname(__filename);
 
 const db = new Database(path.join(__dirname, '..', 'forms.db'));
 
-// Create tables for each form
 db.exec(`
     CREATE TABLE IF NOT EXISTS information_security_policy (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
