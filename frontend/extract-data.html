@@ -46,18 +46,14 @@
                 }
                 const data = await response.json();
 
-                // Convert data to worksheet
                 const ws = XLSX.utils.json_to_sheet(data);
 
-                // Create workbook and add the worksheet
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
 
-                // Generate Excel file
                 const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
                 const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
-                // Create download link
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
