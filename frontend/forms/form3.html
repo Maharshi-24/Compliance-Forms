@@ -7,34 +7,59 @@
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
-    <h1>Employee Screening and Training</h1>
-    <form id="form3">
-        <label>Employee Name: <input type="text" name="employee_name" required></label>
-        <label>Employee ID: <input type="text" name="employee_id" required></label>
-        <label>Position: <input type="text" name="position" required></label>
-        <label>Screening Date: <input type="date" name="screening_date" required></label>
-        <label>Training Completed: 
-            <select name="training_completed" required>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-            </select>
-        </label>
-        <label>Training Date: <input type="date" name="training_date"></label>
-        <label>Termination Date: <input type="date" name="termination_date"></label>
-        <label>Training Status: 
-            <select name="training_status" required>
-                <option value="Pending">Pending</option>
-                <option value="Completed">Completed</option>
-                <option value="In Progress">In Progress</option>
-            </select>
-        </label>
-        <button type="submit">Submit</button>
-    </form>
+    <div class="container">
+        <h1>Employee Screening and Training</h1>
+        <form id="form3">
+            <div class="form-group">
+                <label for="employee_name">Employee Name:</label>
+                <input type="text" id="employee_name" name="employee_name" required>
+            </div>
+            <div class="form-group">
+                <label for="employee_id">Employee ID:</label>
+                <input type="text" id="employee_id" name="employee_id" required>
+            </div>
+            <div class="form-group">
+                <label for="position">Position:</label>
+                <input type="text" id="position" name="position" required>
+            </div>
+            <div class="form-group">
+                <label for="screening_date">Screening Date:</label>
+                <input type="date" id="screening_date" name="screening_date" required>
+            </div>
+            <div class="form-group">
+                <label for="training_completed">Training Completed:</label>
+                <select id="training_completed" name="training_completed" required>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="training_date">Training Date:</label>
+                <input type="date" id="training_date" name="training_date">
+            </div>
+            <div class="form-group">
+                <label for="termination_date">Termination Date:</label>
+                <input type="date" id="termination_date" name="termination_date">
+            </div>
+            <div class="form-group">
+                <label for="training_status">Training Status:</label>
+                <select id="training_status" name="training_status" required>
+                    <option value="Pending">Pending</option>
+                    <option value="Completed">Completed</option>
+                    <option value="In Progress">In Progress</option>
+                </select>
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="message" class="message" style="display: none;"></div>
+    </div>
     <script>
         document.getElementById('form3').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData.entries());
+            const messageElement = document.getElementById('message');
+
             try {
                 const response = await fetch('/submit-form', {
                     method: 'POST',
@@ -43,14 +68,18 @@
                 });
                 const result = await response.json();
                 if (result.success) {
-                    alert('Form submitted successfully!');
+                    messageElement.textContent = 'Form submitted successfully!';
+                    messageElement.style.display = 'block';
+                    messageElement.className = 'message success';
                     e.target.reset();
                 } else {
-                    alert('Error submitting form');
+                    throw new Error(result.error || 'Unknown error');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('An error occurred while submitting the form');
+                messageElement.textContent = `Error: ${error.message}`;
+                messageElement.style.display = 'block';
+                messageElement.className = 'message error';
             }
         });
     </script>

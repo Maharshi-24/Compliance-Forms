@@ -7,20 +7,52 @@
     <link rel="stylesheet" type="text/css" href="../styles.css">
 </head>
 <body>
-    <h1>Information Security Policy Review</h1>
-    <form id="form1">
-        <label>Policy Title: <input type="text" name="policy_title" required></label>
-        <label>Review Date: <input type="date" name="review_date" required></label>
-        <label>Reviewed By: <input type="text" name="reviewed_by" required></label>
-        <label>Review Outcome: <input type="text" name="review_outcome" required></label>
-        <label>Comments: <textarea name="comments"></textarea></label>
-        <button type="submit">Submit</button>
-    </form>
+    <div class="container">
+        <h1>Information Security Policy Review</h1>
+        <form id="form1">
+            <div class="form-group">
+                <label for="policy_title">Policy Title:</label>
+                <input type="text" id="policy_title" name="policy_title" required>
+            </div>
+
+            <div class="form-group">
+                <label for="review_date">Review Date:</label>
+                <input type="date" id="review_date" name="review_date" required>
+            </div>
+
+            <div class="form-group">
+                <label for="reviewed_by">Reviewed By:</label>
+                <input type="text" id="reviewed_by" name="reviewed_by" required>
+            </div>
+
+            <div class="form-group">
+                <label for="review_outcome">Review Outcome:</label>
+                <select id="review_outcome" name="review_outcome" required>
+                    <option value="">Select an outcome</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Needs Revision">Needs Revision</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="comments">Comments:</label>
+                <textarea id="comments" name="comments" rows="4"></textarea>
+            </div>
+
+            <button type="submit">Submit Review</button>
+        </form>
+
+        <div id="message" class="message" style="display: none;"></div>
+    </div>
+
     <script>
         document.getElementById('form1').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData.entries());
+            const messageElement = document.getElementById('message');
+
             try {
                 const response = await fetch('/submit-form', {
                     method: 'POST',
@@ -29,14 +61,18 @@
                 });
                 const result = await response.json();
                 if (result.success) {
-                    alert('Form submitted successfully!');
+                    messageElement.textContent = 'Form submitted successfully!';
+                    messageElement.style.display = 'block';
+                    messageElement.className = 'message success';
                     e.target.reset();
                 } else {
-                    alert('Error submitting form:');
+                    throw new Error(result.error || 'Unknown error');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('An error occurred while submitting the form');
+                messageElement.textContent = `Error: ${error.message}`;
+                messageElement.style.display = 'block';
+                messageElement.className = 'message error';
             }
         });
     </script>
