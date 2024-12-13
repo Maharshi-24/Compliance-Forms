@@ -7,39 +7,85 @@
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
-    <h1>Access Control</h1>
-    <form id="form5">
-        <label>Employee Name: <input type="text" name="employee_name" required></label>
-        <label>Department: <input type="text" name="department" required></label>
-        <label>Access Requested: <input type="text" name="access_requested" required></label>
-        <label>Reason for Access: <textarea name="reason_for_access" required></textarea></label>
-        <label>Requested By: <input type="text" name="requested_by" required></label>
-        <label>Date of Request: <input type="date" name="date_of_request" required></label>
-        <label>Approved By: <input type="text" name="approved_by"></label>
-        <label>Access Granted: 
-            <select name="access_granted">
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-                <option value="Pending">Pending</option>
-            </select>
-        </label>
-        <label>Access Dates: <input type="text" name="access_dates" placeholder="e.g., 2024-01-01 to 2024-12-31"></label>
-        <label>Comments: <textarea name="comments"></textarea></label>
-        <label>Type of Access: 
-            <select name="type_of_access" required>
-                <option value="Physical">Physical</option>
-                <option value="Digital">Digital</option>
-                <option value="Remote">Remote</option>
-            </select>
-        </label>
-        <label>Access Duration: <input type="text" name="access_duration" placeholder="e.g., 1 month, permanent"></label>
-        <button type="submit">Submit</button>
-    </form>
+    <div class="container">
+        <h1>Access Control</h1>
+        <form id="form5">
+            <div class="form-group">
+                <label for="employee_name">Employee Name:</label>
+                <input type="text" id="employee_name" name="employee_name" required>
+            </div>
+            <div class="form-group">
+                <label for="department">Department:</label>
+                <input type="text" id="department" name="department" required>
+            </div>
+            <div class="form-group">
+                <label for="access_requested">Access Requested:</label>
+                <input type="text" id="access_requested" name="access_requested" required>
+            </div>
+            <div class="form-group">
+                <label for="reason_for_access">Reason for Access:</label>
+                <textarea id="reason_for_access" name="reason_for_access" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="requested_by">Requested By:</label>
+                <input type="text" id="requested_by" name="requested_by" required>
+            </div>
+            <div class="form-group">
+                <label for="date_of_request">Date of Request:</label>
+                <input type="date" id="date_of_request" name="date_of_request" required>
+            </div>
+            <div class="form-group">
+                <label for="approved_by">Approved By:</label>
+                <input type="text" id="approved_by" name="approved_by">
+            </div>
+            <div class="form-group">
+                <label for="access_granted">Access Granted:</label>
+                <select id="access_granted" name="access_granted">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                    <option value="Pending">Pending</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="access_start_date">Access Start Date:</label>
+                <input type="date" id="access_start_date" name="access_start_date" required>
+            </div>
+            <div class="form-group">
+                <label for="access_end_date">Access End Date:</label>
+                <input type="date" id="access_end_date" name="access_end_date" required>
+            </div>
+            <div class="form-group">
+                <label for="comments">Comments:</label>
+                <textarea id="comments" name="comments"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="type_of_access">Type of Access:</label>
+                <select id="type_of_access" name="type_of_access" required>
+                    <option value="Physical">Physical</option>
+                    <option value="Remote">Remote</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="access_duration">Access Duration:</label>
+                <input type="text" id="access_duration" name="access_duration" placeholder="e.g., 1 month, permanent">
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="message" class="message" style="display: none;"></div>
+    </div>
     <script>
         document.getElementById('form5').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData.entries());
+            
+            // Combine start and end dates into a single string
+            data.access_dates = `${data.access_start_date} to ${data.access_end_date}`;
+            delete data.access_start_date;
+            delete data.access_end_date;
+
+            const messageElement = document.getElementById('message');
+
             try {
                 const response = await fetch('/submit-form', {
                     method: 'POST',
@@ -48,14 +94,18 @@
                 });
                 const result = await response.json();
                 if (result.success) {
-                    alert('Form submitted successfully!');
+                    messageElement.textContent = 'Form submitted successfully!';
+                    messageElement.style.display = 'block';
+                    messageElement.className = 'message success';
                     e.target.reset();
                 } else {
-                    alert('Error submitting form');
+                    throw new Error(result.error || 'Unknown error');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('An error occurred while submitting the form');
+                messageElement.textContent = `Error: ${error.message}`;
+                messageElement.style.display = 'block';
+                messageElement.className = 'message error';
             }
         });
     </script>

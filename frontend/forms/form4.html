@@ -7,38 +7,66 @@
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
-    <h1>Asset Management</h1>
-    <form id="form4">
-        <label>Asset ID: <input type="text" name="asset_id" required></label>
-        <label>Asset Type: <input type="text" name="asset_type" required></label>
-        <label>Owner: <input type="text" name="owner" required></label>
-        <label>Classification: 
-            <select name="classification" required>
-                <option value="Public">Public</option>
-                <option value="Internal">Internal</option>
-                <option value="Confidential">Confidential</option>
-                <option value="Restricted">Restricted</option>
-            </select>
-        </label>
-        <label>Location: <input type="text" name="location" required></label>
-        <label>Date Added: <input type="date" name="date_added" required></label>
-        <label>End of Life: <input type="date" name="end_of_life"></label>
-        <label>Status: 
-            <select name="status" required>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-                <option value="Maintenance">Maintenance</option>
-                <option value="Disposal">Disposal</option>
-            </select>
-        </label>
-        <label>Comments: <textarea name="comments"></textarea></label>
-        <button type="submit">Submit</button>
-    </form>
+    <div class="container">
+        <h1>Asset Management</h1>
+        <form id="form4">
+            <div class="form-group">
+                <label for="asset_id">Asset ID:</label>
+                <input type="text" id="asset_id" name="asset_id" required>
+            </div>
+            <div class="form-group">
+                <label for="asset_type">Asset Type:</label>
+                <input type="text" id="asset_type" name="asset_type" required>
+            </div>
+            <div class="form-group">
+                <label for="owner">Owner:</label>
+                <input type="text" id="owner" name="owner" required>
+            </div>
+            <div class="form-group">
+                <label for="classification">Classification:</label>
+                <select id="classification" name="classification" required>
+                    <option value="Public">Public</option>
+                    <option value="Private">Private</option>
+                    <option value="Confidential">Confidential</option>
+                    <option value="Restricted">Restricted</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="location">Location:</label>
+                <input type="text" id="location" name="location" required>
+            </div>
+            <div class="form-group">
+                <label for="date_added">Date Added:</label>
+                <input type="date" id="date_added" name="date_added" required>
+            </div>
+            <div class="form-group">
+                <label for="end_of_life">End of Life:</label>
+                <input type="date" id="end_of_life" name="end_of_life">
+            </div>
+            <div class="form-group">
+                <label for="status">Status:</label>
+                <select id="status" name="status" required>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                    <option value="Maintenance">Maintenance</option>
+                    <option value="Disposal">Disposal</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="comments">Comments:</label>
+                <textarea id="comments" name="comments"></textarea>
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="message" class="message" style="display: none;"></div>
+    </div>
     <script>
         document.getElementById('form4').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData.entries());
+            const messageElement = document.getElementById('message');
+
             try {
                 const response = await fetch('/submit-form', {
                     method: 'POST',
@@ -47,14 +75,18 @@
                 });
                 const result = await response.json();
                 if (result.success) {
-                    alert('Form submitted successfully!');
+                    messageElement.textContent = 'Form submitted successfully!';
+                    messageElement.style.display = 'block';
+                    messageElement.className = 'message success';
                     e.target.reset();
                 } else {
-                    alert('Error submitting form');
+                    throw new Error(result.error || 'Unknown error');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('An error occurred while submitting the form');
+                messageElement.textContent = `Error: ${error.message}`;
+                messageElement.style.display = 'block';
+                messageElement.className = 'message error';
             }
         });
     </script>
