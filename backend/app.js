@@ -13,7 +13,9 @@ const app = new Hono();
 
 app.use('/*', cors());  
 
-app.use('/*', serveStatic({ root: path.join(__dirname, '..', 'frontend') }));
+app.use('/*', serveStatic({ 
+    root: path.join(__dirname, '..', 'frontend'),
+}));
 
 app.get('/', async (c) => {
   try {
@@ -26,16 +28,18 @@ app.get('/', async (c) => {
   }
 });
 
-// app.get('/styles.css', async (c) => {
-//     try {
-//       const filePath = path.join(__dirname, '..', 'frontend', 'styles.css');
-//       const content = await fs.readFile(filePath, 'utf-8');
-//       return c.header('Content-Type', 'text/css').body(content);
-//     } catch (error) {
-//       console.error('Error serving styles.css:', error);
-//       return c.text('Error serving the stylesheet', 500);
-//     }
-// });
+app.get('/styles.css', async (c) => {
+    try {
+        const filePath = path.join(__dirname, '..', 'frontend', 'styles.css');
+        const content = await fs.readFile(filePath, 'utf-8');
+        return c.text(content, 200, {
+            'Content-Type': 'text/css'
+        });
+    } catch (error) {
+        console.error('Error serving styles.css:', error);
+        return c.text('Error serving the stylesheet', 500);
+    }
+});
 
 app.get('/forms/:formName', async (c) => {
   const formName = c.req.param('formName');
