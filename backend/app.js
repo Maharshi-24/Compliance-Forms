@@ -349,4 +349,33 @@ app.get('/api/roles', async (c) => {
   }
 });
 
+app.get('/extract-data.html', async (c) => {
+  try {
+    const filePath = path.join(__dirname, '..', 'frontend', 'extract-data.html');
+    const content = await fs.readFile(filePath, 'utf-8');
+    return c.html(content);
+  } catch (error) {
+    console.error('Error serving extract-data.html:', error);
+    return c.text('Error serving the page', 500);
+  }
+});
+
+app.get('/api/extract-data', async (c) => {
+  try {
+    const formName = c.req.query('formName');
+    if (!formName) {
+      return c.json({ error: 'Form name is required' }, 400);
+    }
+
+    const query = `SELECT * FROM ${formName}`;
+    const rows = db.prepare(query).all();
+
+    return c.json(rows);
+  } catch (error) {
+    console.error('Error extracting data:', error);
+    return c.json({ error: 'Failed to extract data' }, 500);
+  }
+});
+
 export default app;
+

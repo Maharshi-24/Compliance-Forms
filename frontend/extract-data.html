@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extract Form Data</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+    <h1>Extract Form Data</h1>
+    <form id="extractForm">
+        <label for="formSelect">Select Form:</label>
+        <select id="formSelect" name="formName" required>
+            <option value="">Select a form</option>
+            <option value="information_security_policy">Information Security Policy Review</option>
+            <option value="information_security_roles">Information Security Roles</option>
+            <option value="employee_screening">Employee Screening and Training</option>
+            <option value="asset_management">Asset Management</option>
+            <option value="access_control">Access Control</option>
+            <option value="cryptography_controls">Cryptographic Controls</option>
+            <option value="physical_security">Physical Security</option>
+            <option value="operations_security">Operations Security</option>
+            <option value="network_incidents">Network Incidents</option>
+            <option value="development_checklist">Development Checklist</option>
+            <option value="supplier_assessments">Supplier Assessments</option>
+            <option value="incident_responses">Incident Responses</option>
+            <option value="business_continuity">Business Continuity</option>
+            <option value="compliance_checklist">Compliance Checklist</option>
+        </select>
+        <button type="submit">Extract Data</button>
+    </form>
+    <div id="message"></div>
+
+    <script>
+        document.getElementById('extractForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formName = document.getElementById('formSelect').value;
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = 'Extracting data...';
+
+            try {
+                const response = await fetch(`/api/extract-data?formName=${formName}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                const data = await response.json();
+
+                // Convert data to worksheet
+                const ws = XLSX.utils.json_to_sheet(data);
+
+                // Create workbook and add the worksheet
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+                // Generate Excel file
+                const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+                const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+                // Create download link
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${formName}_data.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                messageDiv.textContent = 'Data extracted and downloaded successfully!';
+            } catch (error) {
+                console.error('Error:', error);
+                messageDiv.textContent = 'An error occurred while extracting data.';
+            }
+        });
+    </script>
+</body>
+</html>
+
