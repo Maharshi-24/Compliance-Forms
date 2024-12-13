@@ -8,14 +8,7 @@ const __dirname = path.dirname(__filename);
 const db = new Database(path.join(__dirname, '..', 'forms.db'));
 
 db.exec(`
-    CREATE TABLE IF NOT EXISTS information_security_policy (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        policy_title TEXT,
-        review_date TEXT,
-        reviewed_by TEXT,
-        review_outcome TEXT,
-        comments TEXT
-    );
+    
 
     CREATE TABLE IF NOT EXISTS information_security_roles (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
