@@ -15,6 +15,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
+app.use('/css', express.static(path.join(__dirname, '..', 'frontend', 'css')));
 
 // Middleware to check if user is authenticated
 const authenticateUser = (req, res, next) => {
