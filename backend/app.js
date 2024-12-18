@@ -71,40 +71,6 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-app.get('/', async (req, res) => {
-  try {
-    const filePath = path.join(__dirname, '..', 'frontend', 'index.html');
-    const content = await fs.readFile(filePath, 'utf-8');
-    res.send(content);
-  } catch (error) {
-    console.error('Error serving index.html:', error);   
-    res.status(500).send('Error serving the page');
-  }
-});
-
-app.get('/styles.css', async (req, res) => {
-  try {
-    const filePath = path.join(__dirname, '..', 'frontend', 'styles.css');
-    const content = await fs.readFile(filePath, 'utf-8');
-    res.contentType('text/css').send(content);
-  } catch (error) {
-    console.error('Error serving styles.css:', error);
-    res.status(500).send('Error serving the stylesheet');
-  }
-});
-
-app.get('/forms/:formName', async (req, res) => {
-  const formName = req.params.formName;
-  try {
-    const filePath = path.join(__dirname, '..', 'frontend', 'forms', formName);
-    const content = await fs.readFile(filePath, 'utf-8');
-    res.send(content);
-  } catch (error) {
-    console.error(`Error serving ${formName}:`, error);
-    res.status(404).send('Form not found');
-  }
-});
-
 app.post('/submit-form', authenticateUser, async (req, res) => {
   try {
     const { formName, formData } = req.body;
@@ -404,17 +370,6 @@ app.get('/api/roles', async (req, res) => {
   } catch (error) {
     console.error('Error fetching roles:', error);
     res.status(500).json({ error: 'Failed to fetch roles' });
-  }
-});
-
-app.get('/extract-data.html', async (req, res) => {
-  try {
-    const filePath = path.join(__dirname, '..', 'frontend', 'extract-data.html');
-    const content = await fs.readFile(filePath, 'utf-8');
-    res.send(content);
-  } catch (error) {
-    console.error('Error serving extract-data.html:', error);
-    res.status(500).send('Error serving the page');
   }
 });
 
