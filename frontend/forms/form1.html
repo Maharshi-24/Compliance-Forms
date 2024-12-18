@@ -47,17 +47,37 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                window.location.href = '/login.html';
+            }
+        });
+
         document.getElementById('form1').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData.entries());
             const messageElement = document.getElementById('message');
+            const userId = localStorage.getItem('userId');
+            const username = localStorage.getItem('username');
 
             try {
                 const response = await fetch('/submit-form', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ formName: 'Information Security Policy Review', formData: data }),
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'User-ID': userId
+                    },
+                    body: JSON.stringify({ 
+                        formName: 'Information Security Policy Review', 
+                        formData: {
+                            ...data,
+                            userId: userId,
+                            username: username,
+                            submissionTime: new Date().toISOString()
+                        }
+                    }),
                 });
                 const result = await response.json();
                 if (result.success) {
@@ -78,3 +98,4 @@
     </script>
 </body>
 </html>
+

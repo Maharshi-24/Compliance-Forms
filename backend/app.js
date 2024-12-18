@@ -1,81 +1,139 @@
-import { Hono } from 'hono';
-import { serveStatic } from '@hono/node-server/serve-static';
-import { cors } from 'hono/cors';
+import express from 'express';
+import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import db from './database.js';
 import fs from 'fs/promises';
+import bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = new Hono();
+const app = express();
 
-app.use('/*', cors());  
+app.use(cors());
+app.use(express.json());
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
 
-app.use('/*', serveStatic({ 
-    root: path.join(__dirname, '..', 'frontend'),
-}));
+// Middleware to check if user is authenticated
+const authenticateUser = (req, res, next) => {
+  const userId = req.headers['user-id'];
+  if (!userId) {
+    return res.redirect('/login.html');
+  }
+  // You might want to check if the user exists in the database here
+  req.userId = userId;
+  next();
+};
 
-app.get('/', async (c) => {
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'login.html'));
+});
+
+app.get('/index.html', authenticateUser, (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
+});
+
+app.post('/api/signup', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const existingUser = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: 'Username already exists' });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const userId = uuidv4();
+    db.prepare('INSERT INTO users (id, username, password) VALUES (?, ?, ?)').run(userId, username, hashedPassword);
+    res.json({ success: true, message: 'User created successfully' });
+  } catch (error) {
+    console.error('Error in signup:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+});
+
+app.post('/api/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
+    if (!user) {
+      return res.status(400).json({ success: false, message: 'Invalid username or password' });
+    }
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      return res.status(400).json({ success: false, message: 'Invalid username or password' });
+    }
+    res.json({ success: true, userId: user.id, username: user.username });
+  } catch (error) {
+    console.error('Error in login:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+});
+
+app.get('/', async (req, res) => {
   try {
     const filePath = path.join(__dirname, '..', 'frontend', 'index.html');
     const content = await fs.readFile(filePath, 'utf-8');
-    return c.html(content);
+    res.send(content);
   } catch (error) {
     console.error('Error serving index.html:', error);   
-    return c.text('Error serving the page', 500);
+    res.status(500).send('Error serving the page');
   }
 });
 
-app.get('/styles.css', async (c) => {
-    try {
-        const filePath = path.join(__dirname, '..', 'frontend', 'styles.css');
-        const content = await fs.readFile(filePath, 'utf-8');
-        return c.text(content, 200, {
-            'Content-Type': 'text/css'
-        });
-    } catch (error) {
-        console.error('Error serving styles.css:', error);
-        return c.text('Error serving the stylesheet', 500);
-    }
+app.get('/styles.css', async (req, res) => {
+  try {
+    const filePath = path.join(__dirname, '..', 'frontend', 'styles.css');
+    const content = await fs.readFile(filePath, 'utf-8');
+    res.contentType('text/css').send(content);
+  } catch (error) {
+    console.error('Error serving styles.css:', error);
+    res.status(500).send('Error serving the stylesheet');
+  }
 });
 
-app.get('/forms/:formName', async (c) => {
-  const formName = c.req.param('formName');
+app.get('/forms/:formName', async (req, res) => {
+  const formName = req.params.formName;
   try {
     const filePath = path.join(__dirname, '..', 'frontend', 'forms', formName);
     const content = await fs.readFile(filePath, 'utf-8');
-    return c.html(content);
+    res.send(content);
   } catch (error) {
     console.error(`Error serving ${formName}:`, error);
-    return c.text('Form not found', 404);
+    res.status(404).send('Form not found');
   }
 });
 
-app.post('/submit-form', async (c) => {
-    try {
-        const { formName, formData } = await c.req.json();
-        console.log('Received form submission:', formName, formData);
-        let query = '';
-        switch (formName) {
-            case 'Information Security Policy Review':
-                query = `
-                    INSERT INTO information_security_policy 
-                    (policy_title, review_date, reviewed_by, review_outcome, comments)
-                    VALUES (?, ?, ?, ?, ?)
-                `;
-                db.prepare(query).run(
-                    formData.policy_title,
-                    formData.review_date,
-                    formData.reviewed_by,
-                    formData.review_outcome,
-                    formData.comments
-                );
-                break;
+app.post('/submit-form', authenticateUser, async (req, res) => {
+  try {
+    const { formName, formData } = req.body;
+    const userId = req.userId;
+    const username = db.prepare('SELECT username FROM users WHERE id = ?').get(userId).username;
+    const submissionTime = new Date().toISOString();
 
-            case 'Information Security Roles':
-                query = `
+    console.log('Received form submission:', formName, formData);
+    let query = '';
+    switch (formName) {
+      case 'Information Security Policy Review':
+        query = `
+          INSERT INTO information_security_policy 
+          (policy_title, review_date, reviewed_by, review_outcome, comments, user_id, username, submission_time)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        db.prepare(query).run(
+          formData.policy_title,
+          formData.review_date,
+          formData.reviewed_by,
+          formData.review_outcome,
+          formData.comments,
+          userId,
+          username,
+          submissionTime
+        );
+        break;
+
+      case 'Information Security Roles':
+        query = `
                     INSERT INTO information_security_roles 
                     (role, responsible_person, security_responsibilities, date_assigned, review_frequency, comments)
                     VALUES (?, ?, ?, ?, ?, ?)
@@ -326,56 +384,59 @@ app.post('/submit-form', async (c) => {
                 );
                 break;
 
-            default:
-                return c.json({ error: 'Invalid form name' }, 400);
-        }
-        
-        console.log('Form data inserted successfully');
-        return c.json({ success: true });
-
-    } catch (error) {
-        console.error('Error in form submission:', error);
-        return c.json({ error: error.message }, 500);
+      default:
+        return res.status(400).json({ error: 'Invalid form name' });
     }
-});
-
-app.get('/api/roles', async (c) => {
-  try {
-    const roles = db.prepare('SELECT role_name FROM roles').all();
-    return c.json(roles);
+    
+    console.log('Form data inserted successfully');
+    res.json({ success: true });
   } catch (error) {
-    console.error('Error fetching roles:', error);
-    return c.json({ error: 'Failed to fetch roles' }, 500);
+    console.error('Error in form submission:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
-app.get('/extract-data.html', async (c) => {
+app.get('/api/roles', async (req, res) => {
+  try {
+    const roles = db.prepare('SELECT role_name FROM roles').all();
+    res.json(roles);
+  } catch (error) {
+    console.error('Error fetching roles:', error);
+    res.status(500).json({ error: 'Failed to fetch roles' });
+  }
+});
+
+app.get('/extract-data.html', async (req, res) => {
   try {
     const filePath = path.join(__dirname, '..', 'frontend', 'extract-data.html');
     const content = await fs.readFile(filePath, 'utf-8');
-    return c.html(content);
+    res.send(content);
   } catch (error) {
     console.error('Error serving extract-data.html:', error);
-    return c.text('Error serving the page', 500);
+    res.status(500).send('Error serving the page');
   }
 });
 
-app.get('/api/extract-data', async (c) => {
+app.get('/api/extract-data', async (req, res) => {
   try {
-    const formName = c.req.query('formName');
+    const formName = req.query.formName;
     if (!formName) {
-      return c.json({ error: 'Form name is required' }, 400);
+      return res.status(400).json({ error: 'Form name is required' });
     }
 
     const query = `SELECT * FROM ${formName}`;
     const rows = db.prepare(query).all();
 
-    return c.json(rows);
+    res.json(rows);
   } catch (error) {
     console.error('Error extracting data:', error);
-    return c.json({ error: 'Failed to extract data' }, 500);
+    res.status(500).json({ error: 'Failed to extract data' });
   }
 });
 
-export default app;
+app.post('/api/logout', (req, res) => {
+  // In a real application, you might want to invalidate the session here
+  res.json({ success: true });
+});
 
+export default app;
