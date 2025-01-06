@@ -80,14 +80,12 @@
             <textarea id="comments" name="comments" rows="4"></textarea>
         </div>
 
-        <!-- Escalation Contact -->
         <div class="form-group">
             <label for="escalation_contact">Escalation Contact:</label>
             <input type="text" id="escalation_contact" name="escalation_contact" placeholder="Enter Name, 1234512345" required>
             <small>(For immediate action)</small>
         </div>
 
-        <!-- System Downtime Log -->
         <div class="form-group">
             <label for="downtime_start">System Downtime Start:</label>
             <input type="time" id="downtime_start" name="downtime_start" required>
@@ -105,9 +103,9 @@
         </div>
 
         <div class="form-group file-upload">
-            <label for="security_log_document">
+            <label for="policy_document">
                 <span id="upload-label">Upload Security Log Document (PDF or Word)</span>
-                <input type="file" id="security_log_document" name="security_log_document" accept=".pdf,.doc,.docx">
+                <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
             </label>
             <span id="file-name" class="file-name"></span>
         </div>
@@ -128,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('form8');
     const editButton = document.getElementById('editButton');
     const messageElement = document.getElementById('message');
-    const fileInput = document.getElementById('security_log_document');
+    const fileInput = document.getElementById('policy_document');
     const fileNameSpan = document.getElementById('file-name');
     const uploadLabel = document.getElementById('upload-label');
 
