@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Information Security Incident Management</title>
+    <link rel="stylesheet" type="text/css" href="../css/forms.css">
+    <style>
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .file-upload label {
+            display: inline-block;
+            padding: 8px 12px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .file-upload label:hover {
+            background-color: #e0e0e0;
+        }
+        .file-upload input[type="file"] {
+            display: none;
+        }
+        .file-name {
+            margin-top: 8px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Information Security Incident Management</h1>
+    <button id="editButton">Edit Previous Submission</button>
+    <form id="form12" enctype="multipart/form-data">
+        <input type="hidden" id="submissionId" name="submissionId">
+        <input type="hidden" id="formName" name="formName" value="Information Security Incident Management">
+        
+        <div class="form-group">
+            <label for="incident_id">Incident ID:</label>
+            <input type="text" id="incident_id" name="incident_id" required>
+        </div>
+
+        <div class="form-group">
+            <label for="date_of_incident">Date of Incident:</label>
+            <input type="date" id="date_of_incident" name="date_of_incident" required>
+        </div>
+
+        <div class="form-group">
+            <label for="incident_description">Incident Description:</label>
+            <textarea id="incident_description" name="incident_description" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="severity">Severity:</label>
+            <select id="severity" name="severity" required>
+                <option value="">Select severity</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="impact_assessment">Impact Assessment:</label>
+            <textarea id="impact_assessment" name="impact_assessment" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="actions_taken">Actions Taken:</label>
+            <textarea id="actions_taken" name="actions_taken" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="resolution_date">Resolution Date:</label>
+            <input type="date" id="resolution_date" name="resolution_date">
+        </div>
+
+        <div class="form-group">
+            <label for="incident_handled_by">Incident Handled By:</label>
+            <input type="text" id="incident_handled_by" name="incident_handled_by" required>
+        </div>
+
+        <div class="form-group">
+            <label for="post_incident_review_date">Post-Incident Review Date:</label>
+            <input type="date" id="post_incident_review_date" name="post_incident_review_date">
+        </div>
+
+        <!-- Root Cause Analysis -->
+        <div class="form-group">
+            <label for="root_cause_analysis">Root Cause Analysis Conducted:</label>
+            <select id="root_cause_analysis" name="root_cause_analysis" required>
+                <option value="">Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+            <small>(To ensure incident resolution)</small>
+        </div>
+
+        <!-- Incident Response -->
+        <div class="form-group">
+            <label for="incident_response">Incident Response:</label>
+            <textarea id="incident_response" name="incident_response" rows="4"></textarea>
+            <small>(For incident response regarding the situation)</small>
+        </div>
+
+        <div class="form-group file-upload">
+            <label for="incident_report_document">
+                <span id="upload-label">Upload Incident Report Document (PDF or Word)</span>
+                <input type="file" id="incident_report_document" name="incident_report_document" accept=".pdf,.doc,.docx">
+            </label>
+            <span id="file-name" class="file-name"></span>
+        </div>
+
+        <button type="submit">Submit Incident Report</button>
+    </form>
+
+    <div id="message" class="message" style="display: none;"></div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+        window.location.href = '/login.html';
+    }
+
+    const form = document.getElementById('form12');
+    const editButton = document.getElementById('editButton');
+    const messageElement = document.getElementById('message');
+    const fileInput = document.getElementById('incident_report_document');
+    const fileNameSpan = document.getElementById('file-name');
+    const uploadLabel = document.getElementById('upload-label');
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            fileNameSpan.textContent = e.target.files[0].name;
+            uploadLabel.textContent = 'Change Incident Report Document';
+        } else {
+            fileNameSpan.textContent = '';
+            uploadLabel.textContent = 'Upload Incident Report Document (PDF or Word)';
+        }
+    });
+
+    editButton.addEventListener('click', async () => {
+        const submissions = await fetchUserSubmissions();
+        if (submissions.length > 0) {
+            const selectedSubmission = await selectSubmission(submissions);
+            if (selectedSubmission) {
+                await populateForm(selectedSubmission.id);
+            }
+        } else {
+            alert('No previous submissions found.');
+        }
+    });
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const userId = localStorage.getItem('userId');
+        const submissionId = document.getElementById('submissionId').value;
+
+        try {
+            const endpoint = submissionId ? '/edit-form' : '/submit-form';
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 
+                    'User-ID': userId
+                },
+                body: formData,
+            });
+            const result = await response.json();
+            if (result.success) {
+                messageElement.textContent = submissionId ? 'Form updated successfully!' : 'Form submitted successfully!';
+                messageElement.style.display = 'block';
+                messageElement.className = 'message success';
+                form.reset();
+                document.getElementById('submissionId').value = '';
+                fileNameSpan.textContent = '';
+                uploadLabel.textContent = 'Upload Incident Report Document (PDF or Word)';
+            } else {
+                throw new Error(result.error || 'Unknown error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            messageElement.textContent = `Error: ${error.message}`;
+            messageElement.style.display = 'block';
+            messageElement.className = 'message error';
+        }
+    });
+
+    async function fetchUserSubmissions() {
+        const response = await fetch(`/api/user-submissions?formName=Information Security Incident Management`, {
+            headers: { 'User-ID': localStorage.getItem('userId') }
+        });
+        return await response.json();
+    }
+
+    async function selectSubmission(submissions) {
+        const options = submissions.map(s => `<option value="${s.id}">${s.incident_id} (${new Date(s.submission_time).toLocaleString()})</option>`).join('');
+        const result = await new Promise(resolve => {
+            const dialog = document.createElement('dialog');
+            dialog.innerHTML = `
+                <form method="dialog">
+                    <h2>Select a submission to edit</h2>
+                    <select name="submissionId">
+                        ${options}
+                    </select>
+                    <div>
+                        <button value="cancel">Cancel</button>
+                        <button value="confirm">Confirm</button>
+                    </div>
+                </form>
+            `;
+            dialog.addEventListener('close', () => {
+                resolve(dialog.returnValue === 'confirm' ? { id: dialog.querySelector('select').value } : null);
+                dialog.remove();
+            });
+            document.body.appendChild(dialog);
+            dialog.showModal();
+        });
+        return result;
+    }
+
+    async function populateForm(submissionId) {
+        const response = await fetch(`/api/submission/Information Security Incident Management/${submissionId}`, {
+            headers: { 'User-ID': localStorage.getItem('userId') }
+        });
+        const submission = await response.json();
+        
+        document.getElementById('submissionId').value = submission.id;
+        document.getElementById('incident_id').value = submission.incident_id;
+        document.getElementById('date_of_incident').value = submission.date_of_incident;
+        document.getElementById('incident_description').value = submission.incident_description;
+        document.getElementById('severity').value = submission.severity;
+        document.getElementById('impact_assessment').value = submission.impact_assessment;
+        document.getElementById('actions_taken').value = submission.actions_taken;
+        document.getElementById('resolution_date').value = submission.resolution_date;
+        document.getElementById('incident_handled_by').value = submission.incident_handled_by;
+        document.getElementById('post_incident_review_date').value = submission.post_incident_review_date;
+        document.getElementById('root_cause_analysis').value = submission.root_cause_analysis;
+        document.getElementById('incident_response').value = submission.incident_response;
+        
+        if (submission.file_name) {
+            fileNameSpan.textContent = `Current file: ${submission.file_name}`;
+            uploadLabel.textContent = 'Change Incident Report Document';
+        } else {
+            fileNameSpan.textContent = 'No file currently uploaded';
+            uploadLabel.textContent = 'Upload Incident Report Document (PDF or Word)';
+        }
+    }
+});
+</script>
+</body>
+</html>

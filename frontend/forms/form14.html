@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compliance</title>
+    <link rel="stylesheet" type="text/css" href="../css/forms.css">
+    <style>
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .file-upload label {
+            display: inline-block;
+            padding: 8px 12px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .file-upload label:hover {
+            background-color: #e0e0e0;
+        }
+        .file-upload input[type="file"] {
+            display: none;
+        }
+        .file-name {
+            margin-top: 8px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Compliance</h1>
+    <button id="editButton">Edit Previous Submission</button>
+    <form id="form14" enctype="multipart/form-data">
+        <input type="hidden" id="submissionId" name="submissionId">
+        <input type="hidden" id="formName" name="formName" value="Compliance">
+        
+        <div class="form-group">
+            <label for="legislation_regulation">Legislation/Regulation:</label>
+            <input type="text" id="legislation_regulation" name="legislation_regulation" required>
+        </div>
+
+        <div class="form-group">
+            <label for="compliance_requirement">Compliance Requirement:</label>
+            <textarea id="compliance_requirement" name="compliance_requirement" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="date_of_compliance_review">Date of Compliance Review:</label>
+            <input type="date" id="date_of_compliance_review" name="date_of_compliance_review" required>
+        </div>
+
+        <div class="form-group">
+            <label for="compliance_status">Compliance Status:</label>
+            <select id="compliance_status" name="compliance_status" required>
+                <option value="">Select status</option>
+                <option value="Compliant">Compliant</option>
+                <option value="Non-Compliant">Non-Compliant</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="non_compliance_issues">Non-Compliance Issues:</label>
+            <textarea id="non_compliance_issues" name="non_compliance_issues" rows="4"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="action_plan_for_non_compliance">Action Plan for Non-Compliance:</label>
+            <textarea id="action_plan_for_non_compliance" name="action_plan_for_non_compliance" rows="4"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="review_completed_by">Review Completed By:</label>
+            <input type="text" id="review_completed_by" name="review_completed_by" required>
+        </div>
+
+        <!-- Internal Audit Date -->
+        <div class="form-group">
+            <label for="internal_audit_date">Internal Audit Date:</label>
+            <input type="date" id="internal_audit_date" name="internal_audit_date" required>
+            <small>(To align with compliance reviews)</small>
+        </div>
+
+        <div class="form-group file-upload">
+            <label for="compliance_document">
+                <span id="upload-label">Upload Compliance Document (PDF or Word)</span>
+                <input type="file" id="compliance_document" name="compliance_document" accept=".pdf,.doc,.docx">
+            </label>
+            <span id="file-name" class="file-name"></span>
+        </div>
+
+        <button type="submit">Submit Compliance Review</button>
+    </form>
+
+    <div id="message" class="message" style="display: none;"></div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+        window.location.href = '/login.html';
+    }
+
+    const form = document.getElementById('form14');
+    const editButton = document.getElementById('editButton');
+    const messageElement = document.getElementById('message');
+    const fileInput = document.getElementById('compliance_document');
+    const fileNameSpan = document.getElementById('file-name');
+    const uploadLabel = document.getElementById('upload-label');
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            fileNameSpan.textContent = e.target.files[0].name;
+            uploadLabel.textContent = 'Change Compliance Document';
+        } else {
+            fileNameSpan.textContent = '';
+            uploadLabel.textContent = 'Upload Compliance Document (PDF or Word)';
+        }
+    });
+
+    editButton.addEventListener('click', async () => {
+        const submissions = await fetchUserSubmissions();
+        if (submissions.length > 0) {
+            const selectedSubmission = await selectSubmission(submissions);
+            if (selectedSubmission) {
+                await populateForm(selectedSubmission.id);
+            }
+        } else {
+            alert('No previous submissions found.');
+        }
+    });
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const userId = localStorage.getItem('userId');
+        const submissionId = document.getElementById('submissionId').value;
+
+        try {
+            const endpoint = submissionId ? '/edit-form' : '/submit-form';
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 
+                    'User-ID': userId
+                },
+                body: formData,
+            });
+            const result = await response.json();
+            if (result.success) {
+                messageElement.textContent = submissionId ? 'Form updated successfully!' : 'Form submitted successfully!';
+                messageElement.style.display = 'block';
+                messageElement.className = 'message success';
+                form.reset();
+                document.getElementById('submissionId').value = '';
+                fileNameSpan.textContent = '';
+                uploadLabel.textContent = 'Upload Compliance Document (PDF or Word)';
+            } else {
+                throw new Error(result.error || 'Unknown error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            messageElement.textContent = `Error: ${error.message}`;
+            messageElement.style.display = 'block';
+            messageElement.className = 'message error';
+        }
+    });
+
+    async function fetchUserSubmissions() {
+        const response = await fetch(`/api/user-submissions?formName=Compliance`, {
+            headers: { 'User-ID': localStorage.getItem('userId') }
+        });
+        return await response.json();
+    }
+
+    async function selectSubmission(submissions) {
+        const options = submissions.map(s => `<option value="${s.id}">${s.legislation_regulation} (${new Date(s.submission_time).toLocaleString()})</option>`).join('');
+        const result = await new Promise(resolve => {
+            const dialog = document.createElement('dialog');
+            dialog.innerHTML = `
+                <form method="dialog">
+                    <h2>Select a submission to edit</h2>
+                    <select name="submissionId">
+                        ${options}
+                    </select>
+                    <div>
+                        <button value="cancel">Cancel</button>
+                        <button value="confirm">Confirm</button>
+                    </div>
+                </form>
+            `;
+            dialog.addEventListener('close', () => {
+                resolve(dialog.returnValue === 'confirm' ? { id: dialog.querySelector('select').value } : null);
+                dialog.remove();
+            });
+            document.body.appendChild(dialog);
+            dialog.showModal();
+        });
+        return result;
+    }
+
+    async function populateForm(submissionId) {
+        const response = await fetch(`/api/submission/Compliance/${submissionId}`, {
+            headers: { 'User-ID': localStorage.getItem('userId') }
+        });
+        const submission = await response.json();
+        
+        document.getElementById('submissionId').value = submission.id;
+        document.getElementById('legislation_regulation').value = submission.legislation_regulation;
+        document.getElementById('compliance_requirement').value = submission.compliance_requirement;
+        document.getElementById('date_of_compliance_review').value = submission.date_of_compliance_review;
+        document.getElementById('compliance_status').value = submission.compliance_status;
+        document.getElementById('non_compliance_issues').value = submission.non_compliance_issues;
+        document.getElementById('action_plan_for_non_compliance').value = submission.action_plan_for_non_compliance;
+        document.getElementById('review_completed_by').value = submission.review_completed_by;
+        document.getElementById('internal_audit_date').value = submission.internal_audit_date;
+        
+        if (submission.file_name) {
+            fileNameSpan.textContent = `Current file: ${submission.file_name}`;
+            uploadLabel.textContent = 'Change Compliance Document';
+        } else {
+            fileNameSpan.textContent = 'No file currently uploaded';
+            uploadLabel.textContent = 'Upload Compliance Document (PDF or Word)';
+        }
+    }
+});
+</script>
+</body>
+</html>
