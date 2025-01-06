@@ -89,14 +89,12 @@
             <input type="date" id="resolution_date" name="resolution_date">
         </div>
 
-        <!-- Encryption Standard -->
         <div class="form-group">
             <label for="encryption_standard">Encryption Standard:</label>
             <input type="text" id="encryption_standard" name="encryption_standard" value="AES-256" readonly>
             <small>(For ensuring compliance with cryptographic standards)</small>
         </div>
 
-        <!-- Communication Channel Monitoring -->
         <div class="form-group">
             <label for="communication_monitoring">Communication Channel Monitoring:</label>
             <textarea id="communication_monitoring" name="communication_monitoring" rows="4" readonly>Continuous monitoring of all network traffic</textarea>
@@ -104,9 +102,9 @@
         </div>
 
         <div class="form-group file-upload">
-            <label for="incident_report_document">
+            <label for="policy_document">
                 <span id="upload-label">Upload Incident Report Document (PDF or Word)</span>
-                <input type="file" id="incident_report_document" name="incident_report_document" accept=".pdf,.doc,.docx">
+                <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
             </label>
             <span id="file-name" class="file-name"></span>
         </div>
@@ -127,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('form9');
     const editButton = document.getElementById('editButton');
     const messageElement = document.getElementById('message');
-    const fileInput = document.getElementById('incident_report_document');
+    const fileInput = document.getElementById('policy_document');
     const fileNameSpan = document.getElementById('file-name');
     const uploadLabel = document.getElementById('upload-label');
 
