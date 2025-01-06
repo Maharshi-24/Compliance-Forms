@@ -16,6 +16,17 @@ db.exec(`
       modified_by TEXT
   );
 
+  CREATE TABLE IF NOT EXISTS file_info (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    file_id TEXT UNIQUE,
+    original_filename TEXT,
+    user_id TEXT,
+    form_id INTEGER,
+    form_type TEXT,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+  );
+
+
   CREATE TABLE IF NOT EXISTS information_security_policy (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       policy_title TEXT,
@@ -27,7 +38,9 @@ db.exec(`
       username TEXT,
       submission_time TEXT,
       modified_on TEXT,
-      modified_by TEXT
+      modified_by TEXT,
+      file_name TEXT,
+      file_id TEXT UNIQUE
   );
 
   CREATE TABLE IF NOT EXISTS information_security_roles (
@@ -38,9 +51,14 @@ db.exec(`
       date_assigned TEXT,
       review_frequency TEXT,
       comments TEXT,
+      user_id TEXT,
+      username TEXT,
+      submission_time TEXT,
       modified_on TEXT,
-      modified_by TEXT
-  );
+      modified_by TEXT,
+      file_name TEXT,
+      file_id TEXT UNIQUE
+    );
 
   CREATE TABLE IF NOT EXISTS employee_screening (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
