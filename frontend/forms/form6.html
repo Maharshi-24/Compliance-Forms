@@ -4,12 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cryptographic Controls</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" type="text/css" href="../css/forms.css">
+    <style>
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .file-upload label {
+            display: inline-block;
+            padding: 8px 12px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .file-upload label:hover {
+            background-color: #e0e0e0;
+        }
+        .file-upload input[type="file"] {
+            display: none;
+        }
+        .file-name {
+            margin-top: 8px;
+            font-style: italic;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>Cryptographic Controls</h1>
-        <form id="form6">
+        <button id="editButton">Edit Previous Submission</button>
+        <form id="form6" enctype="multipart/form-data">
+            <input type="hidden" id="submissionId" name="submissionId">
+            <input type="hidden" id="formName" name="formName" value="Cryptographic Controls">
             <div class="form-group">
                 <label for="control_type">Control Type:</label>
                 <select id="control_type" name="control_type" required>
@@ -57,37 +86,145 @@
                     <option value="Other">Other</option>
                 </select>
             </div>
+            <div class="form-group file-upload">
+                <label for="policy_document">
+                    <span id="upload-label">Upload Policy Document (PDF or Word)</span>
+                    <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
+                </label>
+                <span id="file-name" class="file-name"></span>
+            </div>
             <button type="submit">Submit</button>
         </form>
         <div id="message" class="message" style="display: none;"></div>
     </div>
     <script>
-        document.getElementById('form6').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData.entries());
-            const messageElement = document.getElementById('message');
+        document.addEventListener('DOMContentLoaded', () => {
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                window.location.href = '/login.html';
+            }
 
-            try {
-                const response = await fetch('/submit-form', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ formName: 'Cryptographic Controls', formData: data }),
-                });
-                const result = await response.json();
-                if (result.success) {
-                    messageElement.textContent = 'Form submitted successfully!';
-                    messageElement.style.display = 'block';
-                    messageElement.className = 'message success';
-                    e.target.reset();
+            const form = document.getElementById('form6');
+            const editButton = document.getElementById('editButton');
+            const messageElement = document.getElementById('message');
+            const fileInput = document.getElementById('policy_document');
+            const fileNameSpan = document.getElementById('file-name');
+            const uploadLabel = document.getElementById('upload-label');
+
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    fileNameSpan.textContent = e.target.files[0].name;
+                    uploadLabel.textContent = 'Change Policy Document';
                 } else {
-                    throw new Error(result.error || 'Unknown error');
+                    fileNameSpan.textContent = '';
+                    uploadLabel.textContent = 'Upload Policy Document (PDF or Word)';
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                messageElement.textContent = `Error: ${error.message}`;
-                messageElement.style.display = 'block';
-                messageElement.className = 'message error';
+            });
+
+            editButton.addEventListener('click', async () => {
+                const submissions = await fetchUserSubmissions();
+                if (submissions.length > 0) {
+                    const selectedSubmission = await selectSubmission(submissions);
+                    if (selectedSubmission) {
+                        await populateForm(selectedSubmission.id);
+                    }
+                } else {
+                    alert('No previous submissions found.');
+                }
+            });
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const userId = localStorage.getItem('userId');
+                const submissionId = document.getElementById('submissionId').value;
+
+                try {
+                    const endpoint = submissionId ? '/edit-form' : '/submit-form';
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: { 
+                            'User-ID': userId
+                        },
+                        body: formData,
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        messageElement.textContent = submissionId ? 'Form updated successfully!' : 'Form submitted successfully!';
+                        messageElement.style.display = 'block';
+                        messageElement.className = 'message success';
+                        form.reset();
+                        document.getElementById('submissionId').value = '';
+                        fileNameSpan.textContent = '';
+                        uploadLabel.textContent = 'Upload Policy Document (PDF or Word)';
+                    } else {
+                        throw new Error(result.error || 'Unknown error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    messageElement.textContent = `Error: ${error.message}`;
+                    messageElement.style.display = 'block';
+                    messageElement.className = 'message error';
+                }
+            });
+
+            async function fetchUserSubmissions() {
+                const response = await fetch(`/api/user-submissions?formName=Cryptographic Controls`, {
+                    headers: { 'User-ID': localStorage.getItem('userId') }
+                });
+                return await response.json();
+            }
+
+            async function selectSubmission(submissions) {
+                const options = submissions.map(s => `<option value="${s.id}">${s.control_type} - ${s.system_application} (${new Date(s.submission_time).toLocaleString()})</option>`).join('');
+                const result = await new Promise(resolve => {
+                    const dialog = document.createElement('dialog');
+                    dialog.innerHTML = `
+                        <form method="dialog">
+                            <h2>Select a submission to edit</h2>
+                            <select name="submissionId">
+                                ${options}
+                            </select>
+                            <div>
+                                <button value="cancel">Cancel</button>
+                                <button value="confirm">Confirm</button>
+                            </div>
+                        </form>
+                    `;
+                    dialog.addEventListener('close', () => {
+                        resolve(dialog.returnValue === 'confirm' ? { id: dialog.querySelector('select').value } : null);
+                        dialog.remove();
+                    });
+                    document.body.appendChild(dialog);
+                    dialog.showModal();
+                });
+                return result;
+            }
+
+            async function populateForm(submissionId) {
+                const response = await fetch(`/api/submission/Cryptographic Controls/${submissionId}`, {
+                    headers: { 'User-ID': localStorage.getItem('userId') }
+                });
+                const submission = await response.json();
+                
+                document.getElementById('submissionId').value = submission.id;
+                document.getElementById('control_type').value = submission.control_type;
+                document.getElementById('system_application').value = submission.system_application;
+                document.getElementById('purpose').value = submission.purpose;
+                document.getElementById('implementation_date').value = submission.implementation_date;
+                document.getElementById('key_management_process').value = submission.key_management_process;
+                document.getElementById('key_expiration_date').value = submission.key_expiration_date;
+                document.getElementById('comments').value = submission.comments;
+                document.getElementById('key_backup_location').value = submission.key_backup_location;
+                document.getElementById('algorithm').value = submission.algorithm;
+                
+                if (submission.file_name) {
+                    fileNameSpan.textContent = `Current file: ${submission.file_name}`;
+                    uploadLabel.textContent = 'Change Policy Document';
+                } else {
+                    fileNameSpan.textContent = 'No file currently uploaded';
+                    uploadLabel.textContent = 'Upload Policy Document (PDF or Word)';
+                }
             }
         });
     </script>

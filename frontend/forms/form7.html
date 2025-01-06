@@ -1,87 +1,252 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Physical Security</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" type="text/css" href="../css/forms.css">
+    <style>
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .file-upload label {
+            display: inline-block;
+            padding: 8px 12px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .file-upload label:hover {
+            background-color: #e0e0e0;
+        }
+        .file-upload input[type="file"] {
+            display: none;
+        }
+        .file-name {
+            margin-top: 8px;
+            font-style: italic;
+        }
+    </style>
 </head>
 <body>
-    <h1>Physical Security</h1>
-    <form id="form7">
-        <label>Location: <input type="text" name="location" required></label>
-        <label>Date of Inspection: <input type="date" name="date_of_inspection" required></label>
-        <label>Physical Barriers: 
-            <select name="physical_barriers" required>
-                <option value="Adequate">Adequate</option>
-                <option value="Needs Improvement">Needs Improvement</option>
-                <option value="Insufficient">Insufficient</option>
-            </select>
-        </label>
-        <label>Entry Control Systems: 
-            <select name="entry_control_systems" required>
-                <option value="Keycard">Keycard</option>
-                <option value="Biometric">Biometric</option>
-                <option value="Security Guard">Security Guard</option>
-                <option value="Multiple Methods">Multiple Methods</option>
-            </select>
-        </label>
-        <label>Secure Storage Areas: 
-            <select name="secure_storage_areas" required>
-                <option value="Locked Cabinets">Locked Cabinets</option>
-                <option value="Secure Room">Secure Room</option>
-                <option value="Access Controlled">Access Controlled</option>
-            </select>
-        </label>
-        <label>Fire Protection Systems: 
-            <select name="fire_protection_systems" required>
-                <option value="Smoke Detectors">Smoke Detectors</option>
-                <option value="Fire Extinguishers">Fire Extinguishers</option>
-                <option value="Sprinkler System">Sprinkler System</option>
-            </select>
-        </label>
-        <label>Alarm Systems: 
-            <select name="alarm_systems" required>
-                <option value="Intrusion Alarm">Intrusion Alarm</option>
-                <option value="Motion Sensors">Motion Sensors</option>
-                <option value="24/7 Monitoring">24/7 Monitoring</option>
-            </select>
-        </label>
-        <label>Comments: <textarea name="comments"></textarea></label>
-        <label>Inspection Frequency: 
-            <select name="inspection_frequency" required>
-                <option value="Monthly">Monthly</option>
-                <option value="Quarterly">Quarterly</option>
-                <option value="Bi-Annually">Bi-Annually</option>
-                <option value="Annually">Annually</option>
-            </select>
-        </label>
-        <label>Access Approval Authority: <input type="text" name="access_approval_authority" required></label>
-        <button type="submit">Submit</button>
-    </form>
+    <div class="container">
+        <h1>Physical Security</h1>
+        <button id="editButton">Edit Previous Submission</button>
+        <form id="form7" enctype="multipart/form-data">
+            <input type="hidden" id="submissionId" name="submissionId">
+            <input type="hidden" id="formName" name="formName" value="Physical Security">
+            <div class="form-group">
+                <label for="location">Location:</label>
+                <input type="text" id="location" name="location" required>
+            </div>
+            <div class="form-group">
+                <label for="date_of_inspection">Date of Inspection:</label>
+                <input type="date" id="date_of_inspection" name="date_of_inspection" required>
+            </div>
+            <div class="form-group">
+                <label for="physical_barriers">Physical Barriers:</label>
+                <select id="physical_barriers" name="physical_barriers" required>
+                    <option value="Adequate">Adequate</option>
+                    <option value="Needs Improvement">Needs Improvement</option>
+                    <option value="Insufficient">Insufficient</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="entry_control_systems">Entry Control Systems:</label>
+                <select id="entry_control_systems" name="entry_control_systems" required>
+                    <option value="Keycard">Keycard</option>
+                    <option value="Biometric">Biometric</option>
+                    <option value="Security Guard">Security Guard</option>
+                    <option value="Multiple Methods">Multiple Methods</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="secure_storage_areas">Secure Storage Areas:</label>
+                <select id="secure_storage_areas" name="secure_storage_areas" required>
+                    <option value="Locked Cabinets">Locked Cabinets</option>
+                    <option value="Secure Room">Secure Room</option>
+                    <option value="Access Controlled">Access Controlled</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="fire_protection_systems">Fire Protection Systems:</label>
+                <select id="fire_protection_systems" name="fire_protection_systems" required>
+                    <option value="Smoke Detectors">Smoke Detectors</option>
+                    <option value="Fire Extinguishers">Fire Extinguishers</option>
+                    <option value="Sprinkler System">Sprinkler System</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="alarm_systems">Alarm Systems:</label>
+                <select id="alarm_systems" name="alarm_systems" required>
+                    <option value="Intrusion Alarm">Intrusion Alarm</option>
+                    <option value="Motion Sensors">Motion Sensors</option>
+                    <option value="24/7 Monitoring">24/7 Monitoring</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="comments">Comments:</label>
+                <textarea id="comments" name="comments"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="inspection_frequency">Inspection Frequency:</label>
+                <select id="inspection_frequency" name="inspection_frequency" required>
+                    <option value="Monthly">Monthly</option>
+                    <option value="Quarterly">Quarterly</option>
+                    <option value="Bi-Annually">Bi-Annually</option>
+                    <option value="Annually">Annually</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="access_approval_authority">Access Approval Authority:</label>
+                <input type="text" id="access_approval_authority" name="access_approval_authority" required>
+            </div>
+            <div class="form-group file-upload">
+                <label for="policy_document">
+                    <span id="upload-label">Upload Policy Document (PDF or Word)</span>
+                    <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
+                </label>
+                <span id="file-name" class="file-name"></span>
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="message" class="message" style="display: none;"></div>
+    </div>
     <script>
-        document.getElementById('form7').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData.entries());
-            try {
-                const response = await fetch('/submit-form', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ formName: 'Physical Security', formData: data }),
-                });
-                const result = await response.json();
-                if (result.success) {
-                    alert('Form submitted successfully!');
-                    e.target.reset();
+        document.addEventListener('DOMContentLoaded', () => {
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                window.location.href = '/login.html';
+            }
+
+            const form = document.getElementById('form7');
+            const editButton = document.getElementById('editButton');
+            const messageElement = document.getElementById('message');
+            const fileInput = document.getElementById('policy_document');
+            const fileNameSpan = document.getElementById('file-name');
+            const uploadLabel = document.getElementById('upload-label');
+
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    fileNameSpan.textContent = e.target.files[0].name;
+                    uploadLabel.textContent = 'Change Policy Document';
                 } else {
-                    alert('Error submitting form');
+                    fileNameSpan.textContent = '';
+                    uploadLabel.textContent = 'Upload Policy Document (PDF or Word)';
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred while submitting the form');
+            });
+
+            editButton.addEventListener('click', async () => {
+                const submissions = await fetchUserSubmissions();
+                if (submissions.length > 0) {
+                    const selectedSubmission = await selectSubmission(submissions);
+                    if (selectedSubmission) {
+                        await populateForm(selectedSubmission.id);
+                    }
+                } else {
+                    alert('No previous submissions found.');
+                }
+            });
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const userId = localStorage.getItem('userId');
+                const submissionId = document.getElementById('submissionId').value;
+
+                try {
+                    const endpoint = submissionId ? '/edit-form' : '/submit-form';
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: { 
+                            'User-ID': userId
+                        },
+                        body: formData,
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        messageElement.textContent = submissionId ? 'Form updated successfully!' : 'Form submitted successfully!';
+                        messageElement.style.display = 'block';
+                        messageElement.className = 'message success';
+                        form.reset();
+                        document.getElementById('submissionId').value = '';
+                        fileNameSpan.textContent = '';
+                        uploadLabel.textContent = 'Upload Policy Document (PDF or Word)';
+                    } else {
+                        throw new Error(result.error || 'Unknown error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    messageElement.textContent = `Error: ${error.message}`;
+                    messageElement.style.display = 'block';
+                    messageElement.className = 'message error';
+                }
+            });
+
+            async function fetchUserSubmissions() {
+                const response = await fetch(`/api/user-submissions?formName=Physical Security`, {
+                    headers: { 'User-ID': localStorage.getItem('userId') }
+                });
+                return await response.json();
+            }
+
+            async function selectSubmission(submissions) {
+                const options = submissions.map(s => `<option value="${s.id}">${s.location} - ${s.date_of_inspection} (${new Date(s.submission_time).toLocaleString()})</option>`).join('');
+                const result = await new Promise(resolve => {
+                    const dialog = document.createElement('dialog');
+                    dialog.innerHTML = `
+                        <form method="dialog">
+                            <h2>Select a submission to edit</h2>
+                            <select name="submissionId">
+                                ${options}
+                            </select>
+                            <div>
+                                <button value="cancel">Cancel</button>
+                                <button value="confirm">Confirm</button>
+                            </div>
+                        </form>
+                    `;
+                    dialog.addEventListener('close', () => {
+                        resolve(dialog.returnValue === 'confirm' ? { id: dialog.querySelector('select').value } : null);
+                        dialog.remove();
+                    });
+                    document.body.appendChild(dialog);
+                    dialog.showModal();
+                });
+                return result;
+            }
+
+            async function populateForm(submissionId) {
+                const response = await fetch(`/api/submission/Physical Security/${submissionId}`, {
+                    headers: { 'User-ID': localStorage.getItem('userId') }
+                });
+                const submission = await response.json();
+                
+                document.getElementById('submissionId').value = submission.id;
+                document.getElementById('location').value = submission.location;
+                document.getElementById('date_of_inspection').value = submission.date_of_inspection;
+                document.getElementById('physical_barriers').value = submission.physical_barriers;
+                document.getElementById('entry_control_systems').value = submission.entry_control_systems;
+                document.getElementById('secure_storage_areas').value = submission.secure_storage_areas;
+                document.getElementById('fire_protection_systems').value = submission.fire_protection_systems;
+                document.getElementById('alarm_systems').value = submission.alarm_systems;
+                document.getElementById('comments').value = submission.comments;
+                document.getElementById('inspection_frequency').value = submission.inspection_frequency;
+                document.getElementById('access_approval_authority').value = submission.access_approval_authority;
+                
+                if (submission.file_name) {
+                    fileNameSpan.textContent = `Current file: ${submission.file_name}`;
+                    uploadLabel.textContent = 'Change Policy Document';
+                } else {
+                    fileNameSpan.textContent = 'No file currently uploaded';
+                    uploadLabel.textContent = 'Upload Policy Document (PDF or Word)';
+                }
             }
         });
     </script>
 </body>
-</html> -->
+</html>

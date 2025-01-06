@@ -1,54 +1,278 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Operations Security</title>
-    <link rel="stylesheet" href="../styles.css">
+    <title>Operations Security Log</title>
+    <link rel="stylesheet" type="text/css" href="../css/forms.css">
+    <style>
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .file-upload label {
+            display: inline-block;
+            padding: 8px 12px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .file-upload label:hover {
+            background-color: #e0e0e0;
+        }
+        .file-upload input[type="file"] {
+            display: none;
+        }
+        .file-name {
+            margin-top: 8px;
+            font-style: italic;
+        }
+    </style>
 </head>
 <body>
-    <h1>Operations Security</h1>
-    <form id="form8">
-        <label>Date: <input type="date" name="date" required></label>
-        <label>System/Application: <input type="text" name="system_application" required></label>
-        <label>Activity Description: <textarea name="activity_description" required></textarea></label>
-        <label>Performed By: <input type="text" name="performed_by" required></label>
-        <label>Actions Taken: <textarea name="actions_taken" required></textarea></label>
-        <label>Review Outcome: 
-            <select name="review_outcome" required>
-                <option value="Successful">Successful</option>
-                <option value="Needs Improvement">Needs Improvement</option>
-                <option value="Failed">Failed</option>
+<div class="container">
+    <h1>Operations Security Log</h1>
+    <button id="editButton">Edit Previous Submission</button>
+    <form id="form8" enctype="multipart/form-data">
+        <input type="hidden" id="submissionId" name="submissionId">
+        <input type="hidden" id="formName" name="formName" value="Operations Security Log">
+        
+        <div class="form-group">
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required>
+        </div>
+
+        <div class="form-group">
+            <label for="system_application">System/Application:</label>
+            <input type="text" id="system_application" name="system_application" required>
+        </div>
+
+        <div class="form-group">
+            <label for="activity_description">Activity Description:</label>
+            <textarea id="activity_description" name="activity_description" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="performed_by">Performed By:</label>
+            <input type="text" id="performed_by" name="performed_by" required>
+        </div>
+
+        <div class="form-group">
+            <label for="actions_taken">Actions Taken:</label>
+            <textarea id="actions_taken" name="actions_taken" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="review_outcome">Review Outcome:</label>
+            <select id="review_outcome" name="review_outcome" required>
+                <option value="">Select an outcome</option>
+                <option value="Approved">Approved</option>
+                <option value="Needs Revision">Needs Revision</option>
+                <option value="Rejected">Rejected</option>
             </select>
-        </label>
-        <label>Comments: <textarea name="comments"></textarea></label>
-        <label>Escalation Contact: <input type="text" name="escalation_contact"></label>
-        <label>Downtime Log: <textarea name="downtime_log"></textarea></label>
+        </div>
+
+        <div class="form-group">
+            <label for="comments">Comments:</label>
+            <textarea id="comments" name="comments" rows="4"></textarea>
+        </div>
+
+        <!-- Escalation Contact -->
+        <div class="form-group">
+            <label for="escalation_contact">Escalation Contact:</label>
+            <input type="text" id="escalation_contact" name="escalation_contact" placeholder="Enter Name, 1234512345" required>
+            <small>(For immediate action)</small>
+        </div>
+
+        <!-- System Downtime Log -->
+        <div class="form-group">
+            <label for="downtime_start">System Downtime Start:</label>
+            <input type="time" id="downtime_start" name="downtime_start" required>
+        </div>
+
+        <div class="form-group">
+            <label for="downtime_end">System Downtime End:</label>
+            <input type="time" id="downtime_end" name="downtime_end" required>
+        </div>
+
+        <div class="form-group">
+            <label for="total_downtime">Total Downtime:</label>
+            <input type="text" id="total_downtime" name="total_downtime" readonly>
+            <small>(Calculated automatically)</small>
+        </div>
+
+        <div class="form-group file-upload">
+            <label for="security_log_document">
+                <span id="upload-label">Upload Security Log Document (PDF or Word)</span>
+                <input type="file" id="security_log_document" name="security_log_document" accept=".pdf,.doc,.docx">
+            </label>
+            <span id="file-name" class="file-name"></span>
+        </div>
+
         <button type="submit">Submit</button>
     </form>
-    <script>
-        document.getElementById('form8').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData.entries());
-            try {
-                const response = await fetch('/submit-form', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ formName: 'Operations Security', formData: data }),
-                });
-                const result = await response.json();
-                if (result.success) {
-                    alert('Form submitted successfully!');
-                    e.target.reset();
-                } else {
-                    alert('Error submitting form');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred while submitting the form');
+
+    <div id="message" class="message" style="display: none;"></div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+        window.location.href = '/login.html';
+    }
+
+    const form = document.getElementById('form8');
+    const editButton = document.getElementById('editButton');
+    const messageElement = document.getElementById('message');
+    const fileInput = document.getElementById('security_log_document');
+    const fileNameSpan = document.getElementById('file-name');
+    const uploadLabel = document.getElementById('upload-label');
+
+    const downtimeStart = document.getElementById('downtime_start');
+    const downtimeEnd = document.getElementById('downtime_end');
+    const totalDowntime = document.getElementById('total_downtime');
+
+    // Calculate total downtime
+    function calculateDowntime() {
+        const startTime = downtimeStart.value;
+        const endTime = downtimeEnd.value;
+        if (startTime && endTime) {
+            const start = new Date(`1970-01-01T${startTime}:00`);
+            const end = new Date(`1970-01-01T${endTime}:00`);
+            const diff = end - start;
+            const hours = Math.floor(diff / 3600000);
+            const minutes = Math.floor((diff % 3600000) / 60000);
+            totalDowntime.value = `${hours}h ${minutes}m`;
+        } else {
+            totalDowntime.value = '';
+        }
+    }
+
+    downtimeStart.addEventListener('change', calculateDowntime);
+    downtimeEnd.addEventListener('change', calculateDowntime);
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            fileNameSpan.textContent = e.target.files[0].name;
+            uploadLabel.textContent = 'Change Security Log Document';
+        } else {
+            fileNameSpan.textContent = '';
+            uploadLabel.textContent = 'Upload Security Log Document (PDF or Word)';
+        }
+    });
+
+    editButton.addEventListener('click', async () => {
+        const submissions = await fetchUserSubmissions();
+        if (submissions.length > 0) {
+            const selectedSubmission = await selectSubmission(submissions);
+            if (selectedSubmission) {
+                await populateForm(selectedSubmission.id);
             }
+        } else {
+            alert('No previous submissions found.');
+        }
+    });
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const userId = localStorage.getItem('userId');
+        const submissionId = document.getElementById('submissionId').value;
+
+        try {
+            const endpoint = submissionId ? '/edit-form' : '/submit-form';
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 
+                    'User-ID': userId
+                },
+                body: formData,
+            });
+            const result = await response.json();
+            if (result.success) {
+                messageElement.textContent = submissionId ? 'Form updated successfully!' : 'Form submitted successfully!';
+                messageElement.style.display = 'block';
+                messageElement.className = 'message success';
+                form.reset();
+                document.getElementById('submissionId').value = '';
+                fileNameSpan.textContent = '';
+                uploadLabel.textContent = 'Upload Security Log Document (PDF or Word)';
+            } else {
+                throw new Error(result.error || 'Unknown error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            messageElement.textContent = `Error: ${error.message}`;
+            messageElement.style.display = 'block';
+            messageElement.className = 'message error';
+        }
+    });
+
+    async function fetchUserSubmissions() {
+        const response = await fetch(`/api/user-submissions?formName=Operations Security Log`, {
+            headers: { 'User-ID': localStorage.getItem('userId') }
         });
-    </script>
+        return await response.json();
+    }
+
+    async function selectSubmission(submissions) {
+        const options = submissions.map(s => `<option value="${s.id}">${s.system_application} (${new Date(s.submission_time).toLocaleString()})</option>`).join('');
+        const result = await new Promise(resolve => {
+            const dialog = document.createElement('dialog');
+            dialog.innerHTML = `
+                <form method="dialog">
+                    <h2>Select a submission to edit</h2>
+                    <select name="submissionId">
+                        ${options}
+                    </select>
+                    <div>
+                        <button value="cancel">Cancel</button>
+                        <button value="confirm">Confirm</button>
+                    </div>
+                </form>
+            `;
+            dialog.addEventListener('close', () => {
+                resolve(dialog.returnValue === 'confirm' ? { id: dialog.querySelector('select').value } : null);
+                dialog.remove();
+            });
+            document.body.appendChild(dialog);
+            dialog.showModal();
+        });
+        return result;
+    }
+
+    async function populateForm(submissionId) {
+        const response = await fetch(`/api/submission/Operations Security Log/${submissionId}`, {
+            headers: { 'User-ID': localStorage.getItem('userId') }
+        });
+        const submission = await response.json();
+        
+        document.getElementById('submissionId').value = submission.id;
+        document.getElementById('date').value = submission.date;
+        document.getElementById('system_application').value = submission.system_application;
+        document.getElementById('activity_description').value = submission.activity_description;
+        document.getElementById('performed_by').value = submission.performed_by;
+        document.getElementById('actions_taken').value = submission.actions_taken;
+        document.getElementById('review_outcome').value = submission.review_outcome;
+        document.getElementById('comments').value = submission.comments;
+        document.getElementById('escalation_contact').value = submission.escalation_contact;
+        document.getElementById('downtime_start').value = submission.downtime_start;
+        document.getElementById('downtime_end').value = submission.downtime_end;
+        document.getElementById('total_downtime').value = submission.total_downtime;
+        
+        if (submission.file_name) {
+            fileNameSpan.textContent = `Current file: ${submission.file_name}`;
+            uploadLabel.textContent = 'Change Security Log Document';
+        } else {
+            fileNameSpan.textContent = 'No file currently uploaded';
+            uploadLabel.textContent = 'Upload Security Log Document (PDF or Word)';
+        }
+    }
+});
+</script>
 </body>
-</html> -->
+</html>
