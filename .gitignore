@@ -1,5 +1,5 @@
 node_modules/
+uploads/
 compliance.db
 package-lock.json
-text/
-backend copy/
+package.json
