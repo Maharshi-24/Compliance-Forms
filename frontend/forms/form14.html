@@ -79,17 +79,15 @@
             <input type="text" id="review_completed_by" name="review_completed_by" required>
         </div>
 
-        <!-- Internal Audit Date -->
         <div class="form-group">
             <label for="internal_audit_date">Internal Audit Date:</label>
             <input type="date" id="internal_audit_date" name="internal_audit_date" required>
-            <small>(To align with compliance reviews)</small>
         </div>
 
         <div class="form-group file-upload">
-            <label for="compliance_document">
+            <label for="policy_document">
                 <span id="upload-label">Upload Compliance Document (PDF or Word)</span>
-                <input type="file" id="compliance_document" name="compliance_document" accept=".pdf,.doc,.docx">
+                <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
             </label>
             <span id="file-name" class="file-name"></span>
         </div>
@@ -110,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('form14');
     const editButton = document.getElementById('editButton');
     const messageElement = document.getElementById('message');
-    const fileInput = document.getElementById('compliance_document');
+    const fileInput = document.getElementById('policy_document');
     const fileNameSpan = document.getElementById('file-name');
     const uploadLabel = document.getElementById('upload-label');
 
