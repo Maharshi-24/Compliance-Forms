@@ -22,12 +22,12 @@
                 <option value="cryptography_controls">Cryptographic Controls</option>
                 <option value="physical_security">Physical Security</option>
                 <option value="operations_security">Operations Security</option>
-                <option value="network_incidents">Network Incidents</option>
-                <option value="development_checklist">Development Checklist</option>
-                <option value="supplier_assessments">Supplier Assessments</option>
-                <option value="incident_responses">Incident Responses</option>
-                <option value="business_continuity">Business Continuity</option>
-                <option value="compliance_checklist">Compliance Checklist</option>
+                <option value="communications_security">Communications Security</option>
+                <option value="system_acquisition">System Acquisition, Development, and Maintenance</option>
+                <option value="supplier_relationships">Supplier Relationships</option>
+                <option value="incident_management">Information Security Incident Management</option>
+                <option value="business_continuity">Business Continuity Management</option>
+                <option value="compliance">Compliance</option>
             </select>
             <button type="submit">Extract Data</button>
         </form>
@@ -36,12 +36,14 @@
     </div>
 
     <script>
+        // Add the JavaScript code here
         document.getElementById('extractForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formName = document.getElementById('formSelect').value;
             const messageDiv = document.getElementById('message');
             const downloadLinksDiv = document.getElementById('downloadLinks');
             messageDiv.textContent = 'Extracting data...';
+            messageDiv.className = ''; // Reset classes
             downloadLinksDiv.innerHTML = '';
 
             try {
@@ -62,7 +64,6 @@
                 });
 
                 const ws = XLSX.utils.json_to_sheet(excelData);
-
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
 
@@ -79,12 +80,13 @@
                 URL.revokeObjectURL(url);
 
                 messageDiv.textContent = 'Data extracted and downloaded successfully!';
+                messageDiv.classList.add('success'); // Add success class
             } catch (error) {
                 console.error('Error:', error);
                 messageDiv.textContent = 'An error occurred while extracting data.';
+                messageDiv.classList.add('error'); // Add error class
             }
         });
     </script>
 </body>
 </html>
-
