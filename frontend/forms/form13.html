@@ -30,6 +30,22 @@
             margin-top: 8px;
             font-style: italic;
         }
+        .message {
+            display: none;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
     </style>
 </head>
 <body>
@@ -84,14 +100,12 @@
             <input type="date" id="next_test_date" name="next_test_date">
         </div>
 
-        <!-- Alternative Location for Storage Communication -->
         <div class="form-group">
             <label for="alternative_location">Alternative Location for Storage Communication:</label>
             <input type="text" id="alternative_location" name="alternative_location" required>
             <small>(For effective crisis communication and safety of the data)</small>
         </div>
 
-        <!-- Continuity Test Results -->
         <div class="form-group">
             <label for="continuity_test_results">Continuity Test Results:</label>
             <textarea id="continuity_test_results" name="continuity_test_results" rows="4"></textarea>
@@ -99,9 +113,9 @@
         </div>
 
         <div class="form-group file-upload">
-            <label for="continuity_plan_document">
+            <label for="policy_document">
                 <span id="upload-label">Upload Continuity Plan Document (PDF or Word)</span>
-                <input type="file" id="continuity_plan_document" name="continuity_plan_document" accept=".pdf,.doc,.docx">
+                <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
             </label>
             <span id="file-name" class="file-name"></span>
         </div>
@@ -122,10 +136,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('form13');
     const editButton = document.getElementById('editButton');
     const messageElement = document.getElementById('message');
-    const fileInput = document.getElementById('continuity_plan_document');
+    const fileInput = document.getElementById('policy_document');
     const fileNameSpan = document.getElementById('file-name');
     const uploadLabel = document.getElementById('upload-label');
 
+    // Handle file upload display
     fileInput.addEventListener('change', (e) => {
         if (e.target.files.length > 0) {
             fileNameSpan.textContent = e.target.files[0].name;
@@ -136,6 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Handle edit button click
     editButton.addEventListener('click', async () => {
         const submissions = await fetchUserSubmissions();
         if (submissions.length > 0) {
@@ -148,6 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Handle form submission
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
@@ -183,6 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Fetch user submissions
     async function fetchUserSubmissions() {
         const response = await fetch(`/api/user-submissions?formName=Business Continuity Management`, {
             headers: { 'User-ID': localStorage.getItem('userId') }
@@ -190,6 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return await response.json();
     }
 
+    // Select a submission to edit
     async function selectSubmission(submissions) {
         const options = submissions.map(s => `<option value="${s.id}">${s.test_objective} (${new Date(s.submission_time).toLocaleString()})</option>`).join('');
         const result = await new Promise(resolve => {
@@ -216,6 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return result;
     }
 
+    // Populate form with selected submission data
     async function populateForm(submissionId) {
         const response = await fetch(`/api/submission/Business Continuity Management/${submissionId}`, {
             headers: { 'User-ID': localStorage.getItem('userId') }
