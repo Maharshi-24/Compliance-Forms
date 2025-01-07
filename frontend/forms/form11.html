@@ -30,6 +30,22 @@
             margin-top: 8px;
             font-style: italic;
         }
+        .message {
+            display: none;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
     </style>
 </head>
 <body>
@@ -88,14 +104,11 @@
             <textarea id="comments" name="comments" rows="4"></textarea>
         </div>
 
-        <!-- Contract Validity -->
         <div class="form-group">
             <label for="contract_validity">Contract Validity:</label>
             <input type="date" id="contract_validity" name="contract_validity" required>
-            <small>(To monitor supplier agreements)</small>
         </div>
 
-        <!-- Supplier Compliance Contract -->
         <div class="form-group">
             <label for="supplier_compliance_contract">Supplier Compliance Contract:</label>
             <select id="supplier_compliance_contract" name="supplier_compliance_contract" required>
@@ -103,13 +116,12 @@
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
             </select>
-            <small>(To ensure suppliers agree to follow company policies)</small>
         </div>
 
         <div class="form-group file-upload">
-            <label for="supplier_document">
+            <label for="policy_document">
                 <span id="upload-label">Upload Supplier Document (PDF or Word)</span>
-                <input type="file" id="supplier_document" name="supplier_document" accept=".pdf,.doc,.docx">
+                <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
             </label>
             <span id="file-name" class="file-name"></span>
         </div>
@@ -130,10 +142,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('form11');
     const editButton = document.getElementById('editButton');
     const messageElement = document.getElementById('message');
-    const fileInput = document.getElementById('supplier_document');
+    const fileInput = document.getElementById('policy_document');
     const fileNameSpan = document.getElementById('file-name');
     const uploadLabel = document.getElementById('upload-label');
 
+    // Handle file upload display
     fileInput.addEventListener('change', (e) => {
         if (e.target.files.length > 0) {
             fileNameSpan.textContent = e.target.files[0].name;
@@ -144,6 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Handle edit button click
     editButton.addEventListener('click', async () => {
         const submissions = await fetchUserSubmissions();
         if (submissions.length > 0) {
@@ -156,6 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Handle form submission
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
@@ -191,6 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Fetch user submissions
     async function fetchUserSubmissions() {
         const response = await fetch(`/api/user-submissions?formName=Supplier Relationships`, {
             headers: { 'User-ID': localStorage.getItem('userId') }
@@ -198,6 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return await response.json();
     }
 
+    // Select a submission to edit
     async function selectSubmission(submissions) {
         const options = submissions.map(s => `<option value="${s.id}">${s.supplier_name} (${new Date(s.submission_time).toLocaleString()})</option>`).join('');
         const result = await new Promise(resolve => {
@@ -224,6 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return result;
     }
 
+    // Populate form with selected submission data
     async function populateForm(submissionId) {
         const response = await fetch(`/api/submission/Supplier Relationships/${submissionId}`, {
             headers: { 'User-ID': localStorage.getItem('userId') }
