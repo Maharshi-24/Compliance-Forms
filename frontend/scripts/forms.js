@@ -105,6 +105,9 @@ document.addEventListener('DOMContentLoaded', () => {
             submitButton.classList.add('loading');
             submitButton.disabled = true;
 
+            // Show a loading animation for 2 seconds before submitting
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+
             const formData = new FormData(e.target);
             const userId = localStorage.getItem('userId');
             const submissionId = document.getElementById('submissionId').value;
@@ -120,15 +123,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 const result = await response.json();
                 if (result.success) {
+                    // Show success animation
                     messageElement.textContent = submissionId ? 'Form updated successfully!' : 'Form submitted successfully!';
                     messageElement.style.display = 'block';
                     messageElement.className = 'message success';
+                    messageElement.style.animation = 'bounceIn 0.5s ease-out';
+
+                    // Reset form after submission
                     form.reset();
                     document.getElementById('submissionId').value = '';
                     if (fileNameSpan) fileNameSpan.textContent = 'No file selected';
                     if (filePreview) filePreview.style.display = 'none';
                     if (uploadLabel) uploadLabel.textContent = 'Upload Policy Document (PDF or Word)';
                     progress.style.width = '0%'; // Reset progress bar
+
+                    // Hide the message after 3 seconds
+                    setTimeout(() => {
+                        messageElement.style.animation = 'fadeOut 0.5s ease-out';
+                        setTimeout(() => {
+                            messageElement.style.display = 'none';
+                        }, 500);
+                    }, 3000);
                 } else {
                     throw new Error(result.error || 'Unknown error');
                 }
@@ -137,6 +152,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 messageElement.textContent = `Error: ${error.message}`;
                 messageElement.style.display = 'block';
                 messageElement.className = 'message error';
+                messageElement.style.animation = 'bounceIn 0.5s ease-out';
+
+                // Hide the error message after 3 seconds
+                setTimeout(() => {
+                    messageElement.style.animation = 'fadeOut 0.5s ease-out';
+                    setTimeout(() => {
+                        messageElement.style.display = 'none';
+                    }, 500);
+                }, 3000);
             } finally {
                 submitButton.classList.remove('loading');
                 submitButton.disabled = false;
