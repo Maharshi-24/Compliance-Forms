@@ -10,6 +10,10 @@
 <body>
     <nav class="navbar">
         <div class="navbar-brand">INOXCVA</div>
+        <div class="navbar-links">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/extract-data.html" class="nav-link">Extract Data</a>
+        </div>
         <div class="navbar-user">
             <span id="userInfo"></span>
             <button id="logoutButton">Logout <i class="fas fa-sign-out-alt"></i></button>
@@ -123,84 +127,73 @@
             </div>
         </div>
 
-        <div class="data-extraction">
-            <h2>Data Extraction</h2>
-            <div class="card">
-                <a href="/extract-data.html">
-                    <h3>Extract Form Data</h3>
-                    <p>Extract and analyze form data.</p>
-                </a>
-            </div>
-        </div>
-    </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-        const userId = localStorage.getItem('userId');
-        const username = localStorage.getItem('username');
+            const userId = localStorage.getItem('userId');
+            const username = localStorage.getItem('username');
 
-        if (!userId || !username) {
-            window.location.href = '/login.html';
-        } else {
-            document.getElementById('userInfo').textContent = `Welcome, ${username}!`;
-        }
-
-        // Fetch last submission date for each form
-        const forms = [
-            'Information Security Policy Review',
-            'Information Security Roles',
-            'Employee Screening and Training',
-            'Asset Management',
-            'Access Control',
-            'Cryptographic Controls',
-            'Physical Security',
-            'Operations Security Log',
-            'Communications Security',
-            'System Acquisition, Development, and Maintenance',
-            'Supplier Relationships',
-            'Information Security Incident Management',
-            'Business Continuity Management',
-            'Compliance'
-        ];
-
-        forms.forEach((formName, index) => {
-            fetch(`/api/last-submission/${encodeURIComponent(formName)}`, {
-            headers: {
-                'User-ID': userId
+            if (!userId || !username) {
+                window.location.href = '/login.html';
+            } else {
+                document.getElementById('userInfo').textContent = `Welcome, ${username}!`;
             }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data && data.submission_time) {
-                const lastAddedElements = document.querySelectorAll('.last-added');
-                if (lastAddedElements[index]) {
-                    lastAddedElements[index].textContent = `Last added: ${new Date(data.submission_time).toLocaleString()}`;
-                }
-                }
-            })
-            .catch(error => console.error('Error fetching last submission:', error));
-        });
 
-        document.getElementById('logoutButton').addEventListener('click', async () => {
-            try {
-            const response = await fetch('/api/logout', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                'User-ID': userId
+            // Fetch last submission date for each form
+            const forms = [
+                'Information Security Policy Review',
+                'Information Security Roles',
+                'Employee Screening and Training',
+                'Asset Management',
+                'Access Control',
+                'Cryptographic Controls',
+                'Physical Security',
+                'Operations Security Log',
+                'Communications Security',
+                'System Acquisition, Development, and Maintenance',
+                'Supplier Relationships',
+                'Information Security Incident Management',
+                'Business Continuity Management',
+                'Compliance'
+            ];
+
+            forms.forEach((formName, index) => {
+                fetch(`/api/last-submission/${encodeURIComponent(formName)}`, {
+                    headers: {
+                        'User-ID': userId
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.submission_time) {
+                        const lastAddedElements = document.querySelectorAll('.last-added');
+                        if (lastAddedElements[index]) {
+                            lastAddedElements[index].textContent = `Last added: ${new Date(data.submission_time).toLocaleString()}`;
+                        }
+                    }
+                })
+                .catch(error => console.error('Error fetching last submission:', error));
+            });
+
+            document.getElementById('logoutButton').addEventListener('click', async () => {
+                try {
+                    const response = await fetch('/api/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'User-ID': userId
+                        }
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        localStorage.removeItem('userId');
+                        localStorage.removeItem('username');
+                        window.location.href = '/login.html';
+                    }
+                } catch (error) {
+                    console.error('Logout failed:', error);
                 }
             });
-            const data = await response.json();
-            if (data.success) {
-                localStorage.removeItem('userId');
-                localStorage.removeItem('username');
-                window.location.href = '/login.html';
-            }
-            } catch (error) {
-            console.error('Logout failed:', error);
-            }
         });
-    });
     </script>
 </body>
 </html>

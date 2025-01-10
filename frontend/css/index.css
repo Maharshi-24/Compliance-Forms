@@ -7,13 +7,12 @@ body {
   color: #0a0a0a;
 }
 
-/* Navbar */
+/* Navbar Styles */
 .navbar {
   background-color: #ffffff;
   color: #0a0a0a;
   padding: 1rem 2rem;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   position: sticky;
@@ -26,16 +25,37 @@ body {
   font-weight: 600;
   color: #1a73e8;
   transition: transform 0.2s ease;
+  width: 50px;
 }
 
 .navbar-brand:hover {
   transform: scale(1.05);
 }
 
+.navbar-links {
+  display: flex;
+  gap: 1.5rem;
+  width: 200px;
+  margin-left: 6%;
+}
+
+.nav-link {
+  color: #0a0a0a;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #1a73e8;
+}
+
 .navbar-user {
   display: flex;
   align-items: center;
   gap: 1rem;
+  width: 400px;
+  margin-left: 49%;
 }
 
 #userInfo {
@@ -55,6 +75,7 @@ body {
   align-items: center;
   gap: 0.5rem;
   transition: background-color 0.2s ease, transform 0.2s ease;
+  margin-left: 5px;
 }
 
 #logoutButton:hover {
