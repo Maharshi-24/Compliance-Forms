@@ -121,33 +121,54 @@ button:hover {
   background-color: #45a049;
 }
 
-/* File Upload Styling */
+/* File Upload Section */
 .file-upload {
-  margin-bottom: 25px;
+  margin-bottom: 1.5rem;
+  text-align: left; /* Align the button to the left */
 }
 
 .file-upload label {
   display: inline-block;
-  padding: 10px 20px;
+  padding: 0.75rem 1.5rem;
   background-color: #1a73e8;
-  color: #fff;
-  border-radius: 6px;
+  color: #ffffff;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .file-upload label:hover {
   background-color: #1557b0;
+  transform: translateY(-2px);
 }
 
 .file-upload input[type="file"] {
   display: none;
 }
 
-.file-name {
-  margin-top: 10px;
-  font-style: italic;
-  color: #777;
+.file-upload .file-preview {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Align the preview to the left */
+  gap: 0.5rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px dashed #dadce0;
+}
+
+.file-upload .file-preview img {
+  width: 24px;
+  height: 24px;
+}
+
+.file-upload .file-preview span {
+  font-size: 0.9rem;
+  color: #5f6368;
+  font-weight: 500;
 }
 
 /* Dialog Styling */

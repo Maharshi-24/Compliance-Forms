@@ -8,10 +8,6 @@ Paste this in package.json:
     "dev": "nodemon backend/server.js"
   },
 
-There is a database.js file and it will automaticall create a database for this project. If there is a need to add more table then add the query fot that table in that db.exec().
-
-Form7 to Form 14 are left to do.
-
 Run in terminal:
 npm run dev
 
