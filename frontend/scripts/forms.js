@@ -1,5 +1,3 @@
-// forms.js - Common JavaScript functionalities for all forms
-
 document.addEventListener('DOMContentLoaded', () => {
     const userId = localStorage.getItem('userId');
     if (!userId) {
@@ -13,7 +11,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileNameSpan = document.getElementById('file-name');
     const uploadLabel = document.getElementById('upload-label');
 
+    // Create a single progress bar container
+    const progressBarContainer = document.createElement('div');
+    progressBarContainer.className = 'progress-bar-container';
+    const progressBar = document.createElement('div');
+    progressBar.className = 'progress-bar';
+    const progress = document.createElement('div');
+    progress.className = 'progress';
+    progressBar.appendChild(progress);
+    progressBarContainer.appendChild(progressBar);
+
     if (fileInput && filePreview && fileIcon && fileNameSpan && uploadLabel) {
+        // Insert the progress bar container after the file preview
+        filePreview.parentNode.insertBefore(progressBarContainer, filePreview.nextSibling);
+
         fileInput.addEventListener('change', (e) => {
             if (e.target.files.length > 0) {
                 const file = e.target.files[0];
@@ -30,10 +41,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 fileNameSpan.textContent = fileName;
                 filePreview.style.display = 'flex';
                 uploadLabel.textContent = 'Change File';
+
+                // Reset progress bar
+                progress.style.width = '0%';
+
+                // Simulate file upload progress
+                let width = 0;
+                const interval = setInterval(() => {
+                    if (width >= 100) {
+                        clearInterval(interval);
+                    } else {
+                        width += 10;
+                        progress.style.width = `${width}%`;
+                    }
+                }, 100);
             } else {
                 fileNameSpan.textContent = 'No file selected';
                 filePreview.style.display = 'none';
                 uploadLabel.textContent = 'Upload Policy Document (PDF or Word)';
+                progress.style.width = '0%'; // Reset progress bar
             }
         });
     }
@@ -75,6 +101,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Form Submission Logic
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const submitButton = form.querySelector('button[type="submit"]');
+            submitButton.classList.add('loading');
+            submitButton.disabled = true;
+
             const formData = new FormData(e.target);
             const userId = localStorage.getItem('userId');
             const submissionId = document.getElementById('submissionId').value;
@@ -98,6 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (fileNameSpan) fileNameSpan.textContent = 'No file selected';
                     if (filePreview) filePreview.style.display = 'none';
                     if (uploadLabel) uploadLabel.textContent = 'Upload Policy Document (PDF or Word)';
+                    progress.style.width = '0%'; // Reset progress bar
                 } else {
                     throw new Error(result.error || 'Unknown error');
                 }
@@ -106,6 +137,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 messageElement.textContent = `Error: ${error.message}`;
                 messageElement.style.display = 'block';
                 messageElement.className = 'message error';
+            } finally {
+                submitButton.classList.remove('loading');
+                submitButton.disabled = false;
             }
         });
     }
