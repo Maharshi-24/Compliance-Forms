@@ -1,4 +1,5 @@
 node_modules/
-forms.db
-Updates.txt
+uploads/
+compliance.db
 package-lock.json
+package.json

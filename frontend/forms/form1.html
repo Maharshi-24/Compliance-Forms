@@ -4,77 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Information Security Policy Review</title>
-    <link rel="stylesheet" type="text/css" href="../styles.css">
+    <link rel="stylesheet" type="text/css" href="../css/forms.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Information Security Policy Review</h1>
-        <form id="form1">
-            <div class="form-group">
-                <label for="policy_title">Policy Title:</label>
-                <input type="text" id="policy_title" name="policy_title" required>
-            </div>
-
-            <div class="form-group">
-                <label for="review_date">Review Date:</label>
-                <input type="date" id="review_date" name="review_date" required>
-            </div>
-
-            <div class="form-group">
-                <label for="reviewed_by">Reviewed By:</label>
-                <input type="text" id="reviewed_by" name="reviewed_by" required>
-            </div>
-
-            <div class="form-group">
-                <label for="review_outcome">Review Outcome:</label>
-                <select id="review_outcome" name="review_outcome" required>
-                    <option value="">Select an outcome</option>
-                    <option value="Approved">Approved</option>
-                    <option value="Needs Revision">Needs Revision</option>
-                    <option value="Rejected">Rejected</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="comments">Comments:</label>
-                <textarea id="comments" name="comments" rows="4"></textarea>
-            </div>
-
-            <button type="submit">Submit Review</button>
-        </form>
-
-        <div id="message" class="message" style="display: none;"></div>
+<nav class="navbar">
+    <div class="navbar-brand">INOXCVA</div>
+    <div class="navbar-links">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/extract-data.html" class="nav-link">Extract Data</a>
     </div>
+</nav>
+    
+<div class="container">
+    <h1>Information Security Policy Review</h1>
+    <button id="editButton">Edit Previous Submission</button>
+    <form id="form1" enctype="multipart/form-data">
+        <input type="hidden" id="submissionId" name="submissionId">
+        <input type="hidden" id="formName" name="formName" value="Information Security Policy Review">
+        <div class="form-group">
+            <label for="policy_title">Policy Title:</label>
+            <input type="text" id="policy_title" name="policy_title" required>
+        </div>
 
-    <script>
-        document.getElementById('form1').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData.entries());
-            const messageElement = document.getElementById('message');
+        <div class="form-group">
+            <label for="review_date">Review Date:</label>
+            <input type="date" id="review_date" name="review_date" required>
+        </div>
 
-            try {
-                const response = await fetch('/submit-form', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ formName: 'Information Security Policy Review', formData: data }),
-                });
-                const result = await response.json();
-                if (result.success) {
-                    messageElement.textContent = 'Form submitted successfully!';
-                    messageElement.style.display = 'block';
-                    messageElement.className = 'message success';
-                    e.target.reset();
-                } else {
-                    throw new Error(result.error || 'Unknown error');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                messageElement.textContent = `Error: ${error.message}`;
-                messageElement.style.display = 'block';
-                messageElement.className = 'message error';
-            }
-        });
-    </script>
+        <div class="form-group">
+            <label for="reviewed_by">Reviewed By:</label>
+            <input type="text" id="reviewed_by" name="reviewed_by" required>
+        </div>
+
+        <div class="form-group">
+            <label for="review_outcome">Review Outcome:</label>
+            <select id="review_outcome" name="review_outcome" required>
+                <option value="">Select an outcome</option>
+                <option value="Approved">Approved</option>
+                <option value="Needs Revision">Needs Revision</option>
+                <option value="Rejected">Rejected</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="comments">Comments:</label>
+            <textarea id="comments" name="comments" rows="4"></textarea>
+        </div>
+
+        <!-- File Upload Section -->
+        <div class="form-group file-upload">
+            <label for="policy_document">
+                <span id="upload-label">Upload Policy Document (PDF or Word)</span>
+                <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
+            </label>
+            <div id="file-preview" class="file-preview" style="display: none;">
+                <img id="file-icon" src="" alt="File Icon">
+                <span id="file-name">No file selected</span>
+            </div>
+        </div>
+
+        <button type="submit">Submit Review</button>
+    </form>
+
+    <div id="message" class="message" style="display: none;"></div>
+</div>
+
+<script src="../scripts/forms.js"></script>
 </body>
 </html>

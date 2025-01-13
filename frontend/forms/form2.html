@@ -4,89 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Information Security Roles</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" type="text/css" href="../css/forms.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Information Security Roles</h1>
-        <form id="form2">
-            <div class="form-group">
-                <label for="role">Role:</label>
-                <select id="role" name="role" required>
-                    <option value="">Select a role</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="responsible_person">Responsible Person:</label>
-                <input type="text" id="responsible_person" name="responsible_person" required>
-            </div>
-            <div class="form-group">
-                <label for="security_responsibilities">Security Responsibilities:</label>
-                <textarea id="security_responsibilities" name="security_responsibilities" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="date_assigned">Date Assigned:</label>
-                <input type="date" id="date_assigned" name="date_assigned" required>
-            </div>
-            <div class="form-group">
-                <label for="review_frequency">Review Frequency:</label>
-                <input type="text" id="review_frequency" name="review_frequency" required>
-            </div>
-            <div class="form-group">
-                <label for="comments">Comments:</label>
-                <textarea id="comments" name="comments"></textarea>
-            </div>
-            <button type="submit">Submit</button>
-        </form>
-        <div id="message" class="message" style="display: none;"></div>
+<nav class="navbar">
+    <div class="navbar-brand">INOXCVA</div>
+    <div class="navbar-links">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/extract-data.html" class="nav-link">Extract Data</a>
     </div>
-    <script>
-        async function fetchRoles() {
-            try {
-                const response = await fetch('/api/roles');
-                const roles = await response.json();
-                const roleSelect = document.querySelector('select[name="role"]');
-                roles.forEach(role => {
-                    const option = document.createElement('option');
-                    option.value = role.role_name;
-                    option.textContent = role.role_name;
-                    roleSelect.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Error fetching roles:', error);
-            }
-        }
+</nav>
 
-        fetchRoles();
+<div class="container">
+    <h1>Information Security Roles</h1>
+    <button id="editButton">Edit Previous Submission</button>
+    <form id="form2" enctype="multipart/form-data">
+        <input type="hidden" id="submissionId" name="submissionId">
+        <input type="hidden" id="formName" name="formName" value="Information Security Roles">
+        <div class="form-group">
+            <label for="role">Role:</label>
+            <select id="role" name="role" required>
+                <option value="">Select a role</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="responsible_person">Responsible Person:</label>
+            <input type="text" id="responsible_person" name="responsible_person" required>
+        </div>
+        <div class="form-group">
+            <label for="security_responsibilities">Security Responsibilities:</label>
+            <textarea id="security_responsibilities" name="security_responsibilities" rows="4" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="date_assigned">Date Assigned:</label>
+            <input type="date" id="date_assigned" name="date_assigned" required>
+        </div>
+        <div class="form-group">
+            <label for="review_frequency">Review Frequency:</label>
+            <input type="text" id="review_frequency" name="review_frequency" required>
+        </div>
+        <div class="form-group">
+            <label for="comments">Comments:</label>
+            <textarea id="comments" name="comments" rows="4"></textarea>
+        </div>
 
-        document.getElementById('form2').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData.entries());
-            const messageElement = document.getElementById('message');
+        <!-- File Upload Section -->
+        <div class="form-group file-upload">
+            <label for="policy_document">
+                <span id="upload-label">Upload Policy Document (PDF or Word)</span>
+                <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
+            </label>
+            <div id="file-preview" class="file-preview" style="display: none;">
+                <img id="file-icon" src="" alt="File Icon">
+                <span id="file-name">No file selected</span>
+            </div>
+        </div>
 
-            try {
-                const response = await fetch('/submit-form', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ formName: 'Information Security Roles', formData: data }),
-                });
-                const result = await response.json();
-                if (result.success) {
-                    messageElement.textContent = 'Form submitted successfully!';
-                    messageElement.style.display = 'block';
-                    messageElement.className = 'message success';
-                    e.target.reset();
-                } else {
-                    throw new Error(result.error || 'Unknown error');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                messageElement.textContent = `Error: ${error.message}`;
-                messageElement.style.display = 'block';
-                messageElement.className = 'message error';
-            }
-        });
-    </script>
+        <button type="submit">Submit</button>
+    </form>
+    <div id="message" class="message" style="display: none;"></div>
+</div>
+
+<script src="../scripts/forms.js"></script>
 </body>
 </html>

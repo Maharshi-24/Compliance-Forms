@@ -1,87 +1,110 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Physical Security</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" type="text/css" href="../css/forms.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <h1>Physical Security</h1>
-    <form id="form7">
-        <label>Location: <input type="text" name="location" required></label>
-        <label>Date of Inspection: <input type="date" name="date_of_inspection" required></label>
-        <label>Physical Barriers: 
-            <select name="physical_barriers" required>
-                <option value="Adequate">Adequate</option>
-                <option value="Needs Improvement">Needs Improvement</option>
-                <option value="Insufficient">Insufficient</option>
-            </select>
-        </label>
-        <label>Entry Control Systems: 
-            <select name="entry_control_systems" required>
-                <option value="Keycard">Keycard</option>
-                <option value="Biometric">Biometric</option>
-                <option value="Security Guard">Security Guard</option>
-                <option value="Multiple Methods">Multiple Methods</option>
-            </select>
-        </label>
-        <label>Secure Storage Areas: 
-            <select name="secure_storage_areas" required>
-                <option value="Locked Cabinets">Locked Cabinets</option>
-                <option value="Secure Room">Secure Room</option>
-                <option value="Access Controlled">Access Controlled</option>
-            </select>
-        </label>
-        <label>Fire Protection Systems: 
-            <select name="fire_protection_systems" required>
-                <option value="Smoke Detectors">Smoke Detectors</option>
-                <option value="Fire Extinguishers">Fire Extinguishers</option>
-                <option value="Sprinkler System">Sprinkler System</option>
-            </select>
-        </label>
-        <label>Alarm Systems: 
-            <select name="alarm_systems" required>
-                <option value="Intrusion Alarm">Intrusion Alarm</option>
-                <option value="Motion Sensors">Motion Sensors</option>
-                <option value="24/7 Monitoring">24/7 Monitoring</option>
-            </select>
-        </label>
-        <label>Comments: <textarea name="comments"></textarea></label>
-        <label>Inspection Frequency: 
-            <select name="inspection_frequency" required>
-                <option value="Monthly">Monthly</option>
-                <option value="Quarterly">Quarterly</option>
-                <option value="Bi-Annually">Bi-Annually</option>
-                <option value="Annually">Annually</option>
-            </select>
-        </label>
-        <label>Access Approval Authority: <input type="text" name="access_approval_authority" required></label>
-        <button type="submit">Submit</button>
-    </form>
-    <script>
-        document.getElementById('form7').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData.entries());
-            try {
-                const response = await fetch('/submit-form', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ formName: 'Physical Security', formData: data }),
-                });
-                const result = await response.json();
-                if (result.success) {
-                    alert('Form submitted successfully!');
-                    e.target.reset();
-                } else {
-                    alert('Error submitting form');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred while submitting the form');
-            }
-        });
-    </script>
+    <nav class="navbar">
+        <div class="navbar-brand">INOXCVA</div>
+        <div class="navbar-links">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/extract-data.html" class="nav-link">Extract Data</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Physical Security</h1>
+        <button id="editButton">Edit Previous Submission</button>
+        <form id="form7" enctype="multipart/form-data">
+            <input type="hidden" id="submissionId" name="submissionId">
+            <input type="hidden" id="formName" name="formName" value="Physical Security">
+            <div class="form-group">
+                <label for="location">Location:</label>
+                <input type="text" id="location" name="location" required>
+            </div>
+            <div class="form-group">
+                <label for="date_of_inspection">Date of Inspection:</label>
+                <input type="date" id="date_of_inspection" name="date_of_inspection" required>
+            </div>
+            <div class="form-group">
+                <label for="physical_barriers">Physical Barriers:</label>
+                <select id="physical_barriers" name="physical_barriers" required>
+                    <option value="Adequate">Adequate</option>
+                    <option value="Needs Improvement">Needs Improvement</option>
+                    <option value="Insufficient">Insufficient</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="entry_control_systems">Entry Control Systems:</label>
+                <select id="entry_control_systems" name="entry_control_systems" required>
+                    <option value="Keycard">Keycard</option>
+                    <option value="Biometric">Biometric</option>
+                    <option value="Security Guard">Security Guard</option>
+                    <option value="Multiple Methods">Multiple Methods</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="secure_storage_areas">Secure Storage Areas:</label>
+                <select id="secure_storage_areas" name="secure_storage_areas" required>
+                    <option value="Locked Cabinets">Locked Cabinets</option>
+                    <option value="Secure Room">Secure Room</option>
+                    <option value="Access Controlled">Access Controlled</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="fire_protection_systems">Fire Protection Systems:</label>
+                <select id="fire_protection_systems" name="fire_protection_systems" required>
+                    <option value="Smoke Detectors">Smoke Detectors</option>
+                    <option value="Fire Extinguishers">Fire Extinguishers</option>
+                    <option value="Sprinkler System">Sprinkler System</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="alarm_systems">Alarm Systems:</label>
+                <select id="alarm_systems" name="alarm_systems" required>
+                    <option value="Intrusion Alarm">Intrusion Alarm</option>
+                    <option value="Motion Sensors">Motion Sensors</option>
+                    <option value="24/7 Monitoring">24/7 Monitoring</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="comments">Comments:</label>
+                <textarea id="comments" name="comments"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="inspection_frequency">Inspection Frequency:</label>
+                <select id="inspection_frequency" name="inspection_frequency" required>
+                    <option value="Monthly">Monthly</option>
+                    <option value="Quarterly">Quarterly</option>
+                    <option value="Bi-Annually">Bi-Annually</option>
+                    <option value="Annually">Annually</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="access_approval_authority">Access Approval Authority:</label>
+                <input type="text" id="access_approval_authority" name="access_approval_authority" required>
+            </div>
+
+            <!-- File Upload Section -->
+            <div class="form-group file-upload">
+                <label for="policy_document">
+                    <span id="upload-label">Upload Policy Document (PDF or Word)</span>
+                    <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
+                </label>
+                <div id="file-preview" class="file-preview" style="display: none;">
+                    <img id="file-icon" src="" alt="File Icon">
+                    <span id="file-name">No file selected</span>
+                </div>
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+        <div id="message" class="message" style="display: none;"></div>
+    </div>
+    <script src="../scripts/forms.js"></script>
 </body>
-</html> -->
+</html>

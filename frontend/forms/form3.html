@@ -4,12 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Screening and Training</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" type="text/css" href="../css/forms.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+    <nav class="navbar">
+        <div class="navbar-brand">INOXCVA</div>
+        <div class="navbar-links">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/extract-data.html" class="nav-link">Extract Data</a>
+        </div>
+    </nav>
+
     <div class="container">
         <h1>Employee Screening and Training</h1>
-        <form id="form3">
+        <button id="editButton">Edit Previous Submission</button>
+        <form id="form3" enctype="multipart/form-data">
+            <input type="hidden" id="submissionId" name="submissionId">
+            <input type="hidden" id="formName" name="formName" value="Employee Screening and Training">
             <div class="form-group">
                 <label for="employee_name">Employee Name:</label>
                 <input type="text" id="employee_name" name="employee_name" required>
@@ -51,57 +63,24 @@
                     <option value="In Progress">In Progress</option>
                 </select>
             </div>
+
+            <!-- File Upload Section -->
+            <div class="form-group file-upload">
+                <label for="policy_document">
+                    <span id="upload-label">Upload Policy Document (PDF or Word)</span>
+                    <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
+                </label>
+                <div id="file-preview" class="file-preview" style="display: none;">
+                    <img id="file-icon" src="" alt="File Icon">
+                    <span id="file-name">No file selected</span>
+                </div>
+            </div>
+
             <button type="submit">Submit</button>
         </form>
         <div id="message" class="message" style="display: none;"></div>
     </div>
-    <script>
-        async function fetchRoles() {
-            try {
-                const response = await fetch('/api/roles');
-                const roles = await response.json();
-                const roleSelect = document.querySelector('select[name="position"]');
-                roles.forEach(role => {
-                    const option = document.createElement('option');
-                    option.value = role.role_name;
-                    option.textContent = role.role_name;
-                    roleSelect.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Error fetching roles:', error);
-            }
-        }
 
-        fetchRoles();
-
-        document.getElementById('form3').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData.entries());
-            const messageElement = document.getElementById('message');
-
-            try {
-                const response = await fetch('/submit-form', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ formName: 'Employee Screening and Training', formData: data }),
-                });
-                const result = await response.json();
-                if (result.success) {
-                    messageElement.textContent = 'Form submitted successfully!';
-                    messageElement.style.display = 'block';
-                    messageElement.className = 'message success';
-                    e.target.reset();
-                } else {
-                    throw new Error(result.error || 'Unknown error');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                messageElement.textContent = `Error: ${error.message}`;
-                messageElement.style.display = 'block';
-                messageElement.className = 'message error';
-            }
-        });
-    </script>
+    <script src="../scripts/forms.js"></script>
 </body>
 </html>
