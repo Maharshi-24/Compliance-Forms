@@ -63,6 +63,9 @@ body {
   font-weight: 500;
   color: #0a0a0a;
   font-size: 1rem;
+  margin-right: 150px;
+  position: absolute;
+  right: 0;
 }
 
 #logoutButton {
@@ -77,6 +80,9 @@ body {
   gap: 0.5rem;
   transition: background-color 0.2s ease, transform 0.2s ease;
   margin-left: 5px;
+  margin-right: 40px;
+  position: absolute;
+  right: 0;
 }
 
 #logoutButton:hover {
