@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Information Security Policy Review</title>
+    <link rel="stylesheet" type="text/css" href="../css/forms.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+<nav class="navbar">
+    <div class="navbar-brand">INOXCVA</div>
+    <div class="navbar-links">
+        <a href="/" class="nav-link">Home</a>
+        <a href="../extract-data.html" class="nav-link">Extract Data</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h1>Information Security Policy Review</h1>
+    <form id="form1" enctype="multipart/form-data">
+        <input type="hidden" id="submissionId" name="submissionId">
+        <input type="hidden" id="formName" name="formName" value="Information Security Policy Review">
+
+        <!-- Policy Title -->
+        <div class="form-group">
+            <label for="policy_title">Policy Title:</label>
+            <input type="text" id="policy_title" name="policy_title" readonly>
+        </div>
+
+        <!-- Review Date -->
+        <div class="form-group">
+            <label for="review_date">Review Date:</label>
+            <input type="date" id="review_date" name="review_date" required>
+        </div>
+
+        <!-- Review Status Dropdown -->
+        <div class="form-group">
+            <label for="review_status">Review Status:</label>
+            <select id="review_status" name="review_status" required>
+                <option value="Needs revision">Needs revision</option>
+                <option value="Approve">Approve</option>
+                <option value="Reject">Reject</option>
+            </select>
+        </div>
+
+        <!-- Comments -->
+        <div class="form-group">
+            <label for="comments">Comments:</label>
+            <textarea id="comments" name="comments" rows="4"></textarea>
+        </div>
+
+        <!-- File Preview (Non-editable) -->
+        <div class="form-group file-upload">
+            <div id="file-preview" class="file-preview" style="display: none;">
+                <img id="file-icon" src="" alt="File Icon">
+                <span id="file-name">No file selected</span>
+            </div>
+        </div>
+
+        <button type="submit">Submit Review</button>
+    </form>
+
+    <div id="message" class="message" style="display: none;"></div>
+</div>
+
+<script src="../scripts/forms-review.js"></script>
+</body>
+</html>

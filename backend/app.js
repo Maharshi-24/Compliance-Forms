@@ -823,4 +823,24 @@ app.get('/api/last-submission/:formName', authenticateUser, async (req, res) => 
     }
 });
 
+app.put('/api/update-submission/:id', authenticateUser, async (req, res) => {
+  try {
+      const { id } = req.params;
+      const { policy_title, review_date, review_status, comments, reviewed_by } = req.body;
+
+      // Update the submission in the database
+      const query = `
+          UPDATE information_security_policy
+          SET policy_title = ?, review_date = ?, review_status = ?, comments = ?, reviewed_by = ?
+          WHERE id = ?
+      `;
+      db.prepare(query).run(policy_title, review_date, review_status, comments, reviewed_by, id);
+
+      res.json({ success: true, message: 'Submission updated successfully' });
+  } catch (error) {
+      console.error('Error updating submission:', error);
+      res.status(500).json({ success: false, message: 'Failed to update submission' });
+  }
+});
+
 export default app;
