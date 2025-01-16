@@ -804,62 +804,23 @@ app.get('/download-policy/:fileId', authenticateUser, (req, res) => {
 
 app.get('/api/last-submission/:formName', authenticateUser, async (req, res) => {
   try {
-    const { formName } = req.params;
-    const userId = req.userId;
+      const { formName } = req.params;
 
-    let query = '';
-    switch (formName) {
-      case 'Information Security Policy Review':
-        query = 'SELECT submission_time FROM information_security_policy WHERE user_id = ? ORDER BY submission_time DESC LIMIT 1';
-        break;
-      case 'Information Security Roles':
-        query = 'SELECT submission_time FROM information_security_roles WHERE user_id = ? ORDER BY submission_time DESC LIMIT 1';
-        break;
-      case 'Employee Screening and Training':
-        query = 'SELECT submission_time FROM employee_screening WHERE user_id = ? ORDER BY submission_time DESC LIMIT 1';
-        break;
-      case 'Asset Management':
-        query = 'SELECT submission_time FROM asset_management WHERE user_id = ? ORDER BY submission_time DESC LIMIT 1';
-        break;
-      case 'Access Control':
-        query = 'SELECT submission_time FROM access_control WHERE user_id = ? ORDER BY submission_time DESC LIMIT 1';
-        break;
-      case 'Cryptographic Controls':
-        query = 'SELECT submission_time FROM cryptography_controls WHERE user_id = ? ORDER BY submission_time DESC LIMIT 1';
-        break;
-      case 'Physical Security':
-        query = 'SELECT submission_time FROM physical_security WHERE user_id = ? ORDER BY submission_time DESC LIMIT 1';
-        break;
-      case 'Operations Security Log':
-        query = 'SELECT submission_time FROM operations_security WHERE user_id = ? ORDER BY submission_time DESC LIMIT 1';
-        break;
-      case 'Communications Security':
-        query = 'SELECT submission_time FROM communications_security WHERE user_id = ? ORDER BY submission_time DESC LIMIT 1';
-        break;
-      case 'System Acquisition, Development, and Maintenance':
-        query = 'SELECT submission_time FROM system_acquisition WHERE user_id = ? ORDER BY submission_time DESC LIMIT 1';
-        break;
-      case 'Supplier Relationships':
-        query = 'SELECT submission_time FROM supplier_relationships WHERE user_id = ? ORDER BY submission_time DESC LIMIT 1';
-        break;
-      case 'Information Security Incident Management':
-        query = 'SELECT submission_time FROM incident_management WHERE user_id = ? ORDER BY submission_time DESC LIMIT 1';
-        break;
-      case 'Business Continuity Management':
-        query = 'SELECT submission_time FROM business_continuity WHERE user_id = ? ORDER BY submission_time DESC LIMIT 1';
-        break;
-      case 'Compliance':
-        query = 'SELECT submission_time FROM compliance WHERE user_id = ? ORDER BY submission_time DESC LIMIT 1';
-        break;
-      default:
-        return res.status(400).json({ error: 'Invalid form name' });
-    }
+      let query = '';
+      switch (formName) {
+          case 'Information Security Policy Review':
+              query = 'SELECT * FROM information_security_policy ORDER BY submission_time DESC LIMIT 1';
+              break;
+          // Add cases for other forms if needed
+          default:
+              return res.status(400).json({ error: 'Invalid form name' });
+      }
 
-    const lastSubmission = db.prepare(query).get(userId);
-    res.json(lastSubmission);
+      const lastSubmission = db.prepare(query).get();
+      res.json(lastSubmission || null);
   } catch (error) {
-    console.error('Error fetching last submission:', error);
-    res.status(500).json({ error: 'Failed to fetch last submission' });
+      console.error('Error fetching last submission:', error);
+      res.status(500).json({ error: 'Failed to fetch last submission' });
   }
 });
 
