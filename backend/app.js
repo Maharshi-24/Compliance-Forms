@@ -116,7 +116,6 @@ app.post('/submit-form', authenticateUser, upload.single('policy_document'), asy
     if (!user) {
       return res.status(400).json({ error: 'User not found' });
     }
-    const username = user.username;
     const submissionTime = new Date().toISOString();
 
     console.log('Received form submission:', formName, req.body);
@@ -126,20 +125,20 @@ app.post('/submit-form', authenticateUser, upload.single('policy_document'), asy
         const fileId = path2.parse(req.file.filename).name;
         query = `
           INSERT INTO information_security_policy 
-          (policy_title, review_date, reviewed_by, review_outcome, comments, user_id, username, submission_time, modified_on, modified_by, file_id, file_name)
+          (policy_title, review_date, reviewed_by, review_status, comments, user_id, uploaded_by, submission_time, modified_on, modified_by, file_id, file_name)
           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
         const result = db.prepare(query).run(
           req.body.policy_title,
           req.body.review_date,
-          '', // reviewed_by (empty)
-          '', // review_outcome (empty)
+          '',
+          'review',
           req.body.comments,
           userId,
-          username,
+          user.username,
           submissionTime,
           submissionTime,
-          username,
+          user.username,
           fileId,
           req.file.originalname
         );

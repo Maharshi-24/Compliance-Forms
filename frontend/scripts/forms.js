@@ -136,3 +136,111 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// Common function to fetch user submissions
+async function fetchUserSubmissions() {
+    const formName = document.getElementById('formName').value;
+    const response = await fetch(`/api/user-submissions?formName=${formName}`, {
+        headers: { 'User-ID': localStorage.getItem('userId') }
+    });
+    return await response.json();
+}
+
+// Common function to select a submission
+async function selectSubmission(submissions) {
+    const options = submissions.map(s => `<option value="${s.id}">${s.policy_title || s.role || s.employee_name || s.asset_id || s.control_type || s.location || s.system_application || s.incident_description || s.project_name || s.supplier_name || s.incident_id || s.test_objective || s.legislation_regulation} (${new Date(s.submission_time).toLocaleString()})</option>`).join('');
+    const result = await new Promise(resolve => {
+        const dialog = document.createElement('dialog');
+        dialog.innerHTML = `
+            <form method="dialog">
+                <h2>Select a submission to edit</h2>
+                <select name="submissionId">
+                    ${options}
+                </select>
+                <div>
+                    <button value="cancel">Cancel</button>
+                    <button value="confirm">Confirm</button>
+                </div>
+            </form>
+        `;
+        dialog.addEventListener('close', () => {
+            resolve(dialog.returnValue === 'confirm' ? { id: dialog.querySelector('select').value } : null);
+            dialog.remove();
+        });
+        document.body.appendChild(dialog);
+        dialog.showModal();
+    });
+    return result;
+}
+
+// Common function to populate form with submission data
+async function populateForm(submissionId) {
+    const formName = document.getElementById('formName').value;
+    const response = await fetch(`/api/submission/${formName}/${submissionId}`, {
+        headers: { 'User-ID': localStorage.getItem('userId') }
+    });
+    const submission = await response.json();
+
+    // Populate form fields
+    document.getElementById('submissionId').value = submission.id;
+    for (const key in submission) {
+        if (key !== 'id' && key !== 'file_name' && key !== 'submission_time') {
+            const field = document.getElementById(key);
+            if (field) {
+                if (key === 'review_status') {
+                    field.value = submission[key] || 'review'; // Default to 'review'
+                } else {
+                    field.value = submission[key];
+                }
+            }
+        }
+    }
+
+    // Handle file preview
+    const fileIcon = document.getElementById('file-icon');
+    const fileNameSpan = document.getElementById('file-name');
+    const filePreview = document.getElementById('file-preview');
+    const uploadLabel = document.getElementById('upload-label');
+
+    if (submission.file_name) {
+        const fileExtension = submission.file_name.split('.').pop().toLowerCase();
+        if (fileExtension === 'pdf') {
+            fileIcon.src = '../images/pdf-img.png'; // Path to PDF icon
+        } else if (fileExtension === 'doc' || fileExtension === 'docx') {
+            fileIcon.src = '../images/word-img.png'; // Path to Word icon
+        }
+
+        fileNameSpan.textContent = submission.file_name;
+        filePreview.style.display = 'flex';
+        uploadLabel.textContent = 'Change File';
+    } else {
+        fileNameSpan.textContent = 'No file currently uploaded';
+        filePreview.style.display = 'none';
+        uploadLabel.textContent = 'Upload Policy Document (PDF or Word)';
+    }
+}
+
+// Fetch roles from the server
+async function fetchRoles() {
+    try {
+        const response = await fetch('/api/roles', {
+            headers: { 'User-ID': localStorage.getItem('userId') }
+        });
+        const roles = await response.json();
+        return roles;
+    } catch (error) {
+        console.error('Error fetching roles:', error);
+        return [];
+    }
+}
+
+// Populate dropdown with roles
+function populateDropdown(dropdown, roles) {
+    dropdown.innerHTML = '<option value="">Select a role</option>';
+    roles.forEach(role => {
+        const option = document.createElement('option');
+        option.value = role.role_name;
+        option.textContent = role.role_name;
+        dropdown.appendChild(option);
+    });
+}
