@@ -27,28 +27,34 @@
         </div>
 
         <div class="grid">
+            <!-- Forms View Card (Visible to everyone) -->
             <div class="card">
                 <a href="forms-handler/forms-view.html">
                     <h3>View Policies</h3>
                     <span class="last-added"></span>
                 </a>
             </div>
-            <div class="card">
+
+            <!-- Forms Upload Card (Visible only to Uploaders) -->
+            <div class="card" id="uploadCard" style="display: none;">
                 <a href="forms-handler/forms-upload.html">
                     <h3>Update Policies</h3>
                     <span class="last-added"></span>
                 </a>
             </div>
-            <div class="card">
+
+            <!-- Forms Review Card (Visible only to Reviewers) -->
+            <div class="card" id="reviewCard" style="display: none;">
                 <a href="forms-handler/forms-review.html">
                     <h3>Review Policies</h3>
                     <span class="last-added"></span>
                 </a>
             </div>
         </div>
+    </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             const userId = localStorage.getItem('userId');
             const username = localStorage.getItem('username');
 
@@ -56,8 +62,33 @@
                 window.location.href = '/login.html';
             } else {
                 document.getElementById('userInfo').textContent = `Welcome, ${username}!`;
+
+                // Fetch user role from the server
+                try {
+                    const response = await fetch('/api/user-role', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'User-ID': userId
+                        }
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        const userRole = data.usertype;
+
+                        // Show/hide cards based on user role
+                        if (userRole === 'Uploader') {
+                            document.getElementById('uploadCard').style.display = 'block';
+                        } else if (userRole === 'Reviewer') {
+                            document.getElementById('reviewCard').style.display = 'block';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching user role:', error);
+                }
             }
 
+            // Logout functionality
             document.getElementById('logoutButton').addEventListener('click', async () => {
                 try {
                     const response = await fetch('/api/logout', {

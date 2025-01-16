@@ -1604,6 +1604,20 @@ app.get('/api/roles', authenticateUser, async (req, res) => {
   }
 });
 
+app.get('/api/user-role', authenticateUser, async (req, res) => {
+  try {
+      const userId = req.userId;
+      const user = db.prepare('SELECT usertype FROM users WHERE id = ?').get(userId);
+      if (!user) {
+          return res.status(404).json({ success: false, message: 'User not found' });
+      }
+      res.json({ success: true, usertype: user.usertype });
+  } catch (error) {
+      console.error('Error fetching user role:', error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+});
+
 app.get('/api/extract-data', authenticateUser, async (req, res) => {
   try {
     const formName = req.query.formName;
