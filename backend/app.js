@@ -803,25 +803,24 @@ app.get('/download-policy/:fileId', authenticateUser, (req, res) => {
 });
 
 app.get('/api/last-submission/:formName', authenticateUser, async (req, res) => {
-  try {
-      const { formName } = req.params;
+    try {
+        const { formName } = req.params;
+        let query = '';
+        switch (formName) {
+            case 'Information Security Policy Review':
+                query = 'SELECT * FROM information_security_policy ORDER BY submission_time DESC LIMIT 1';
+                break;
+            // Add cases for other forms if needed
+            default:
+                return res.status(400).json({ error: 'Invalid form name' });
+        }
 
-      let query = '';
-      switch (formName) {
-          case 'Information Security Policy Review':
-              query = 'SELECT * FROM information_security_policy ORDER BY submission_time DESC LIMIT 1';
-              break;
-          // Add cases for other forms if needed
-          default:
-              return res.status(400).json({ error: 'Invalid form name' });
-      }
-
-      const lastSubmission = db.prepare(query).get();
-      res.json(lastSubmission || null);
-  } catch (error) {
-      console.error('Error fetching last submission:', error);
-      res.status(500).json({ error: 'Failed to fetch last submission' });
-  }
+        const lastSubmission = db.prepare(query).get();
+        res.json(lastSubmission || null);
+    } catch (error) {
+        console.error('Error fetching last submission:', error);
+        res.status(500).json({ error: 'Failed to fetch last submission' });
+    }
 });
 
 export default app;
