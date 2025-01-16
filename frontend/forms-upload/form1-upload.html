@@ -18,7 +18,6 @@
     
 <div class="container">
     <h1>Information Security Policy Review</h1>
-    <button id="editButton">Edit Previous Submission</button>
     <form id="form1" enctype="multipart/form-data">
         <input type="hidden" id="submissionId" name="submissionId">
         <input type="hidden" id="formName" name="formName" value="Information Security Policy Review">
@@ -30,21 +29,6 @@
         <div class="form-group">
             <label for="review_date">Review Date:</label>
             <input type="date" id="review_date" name="review_date" required>
-        </div>
-
-        <div class="form-group">
-            <label for="reviewed_by">Reviewed By:</label>
-            <input type="text" id="reviewed_by" name="reviewed_by" required>
-        </div>
-
-        <div class="form-group">
-            <label for="review_outcome">Review Outcome:</label>
-            <select id="review_outcome" name="review_outcome" required>
-                <option value="">Select an outcome</option>
-                <option value="Approved">Approved</option>
-                <option value="Needs Revision">Needs Revision</option>
-                <option value="Rejected">Rejected</option>
-            </select>
         </div>
 
         <div class="form-group">
