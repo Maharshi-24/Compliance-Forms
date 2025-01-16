@@ -63,36 +63,48 @@ app.get('/index.html', authenticateUser, (req, res) => {
 
 app.post('/api/signup', async (req, res) => {
   try {
-    const { username, password } = req.body;
-    const existingUser = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
-    if (existingUser) {
-      return res.status(400).json({ success: false, message: 'Username already exists' });
-    }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const userId = uuidv4();
-    db.prepare('INSERT INTO users (id, username, password) VALUES (?, ?, ?)').run(userId, username, hashedPassword);
-    res.json({ success: true, message: 'User created successfully' });
+      const { email, username, password, usertype } = req.body; // Include email
+      // Check if email already exists
+      const existingEmail = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+      if (existingEmail) {
+          return res.status(400).json({ success: false, message: 'Email already exists' });
+      }
+      // Check if username already exists
+      const existingUser = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
+      if (existingUser) {
+          return res.status(400).json({ success: false, message: 'Username already exists' });
+      }
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const userId = uuidv4();
+      db.prepare('INSERT INTO users (id, email, username, password, usertype) VALUES (?, ?, ?, ?, ?)').run(
+          userId,
+          email,
+          username,
+          hashedPassword,
+          usertype
+      );
+      res.json({ success: true, message: 'User created successfully' });
   } catch (error) {
-    console.error('Error in signup:', error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+      console.error('Error in signup:', error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
 
 app.post('/api/login', async (req, res) => {
   try {
-    const { username, password } = req.body;
-    const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
-    if (!user) {
-      return res.status(400).json({ success: false, message: 'Invalid username or password' });
-    }
-    const passwordMatch = await bcrypt.compare(password, user.password);
-    if (!passwordMatch) {
-      return res.status(400).json({ success: false, message: 'Invalid username or password' });
-    }
-    res.json({ success: true, userId: user.id, username: user.username });
+      const { email, password } = req.body; // Changed from username to email
+      const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email); // Changed to query by email
+      if (!user) {
+          return res.status(400).json({ success: false, message: 'Invalid email or password' });
+      }
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      if (!passwordMatch) {
+          return res.status(400).json({ success: false, message: 'Invalid email or password' });
+      }
+      res.json({ success: true, userId: user.id, username: user.username });
   } catch (error) {
-    console.error('Error in login:', error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+      console.error('Error in login:', error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
 

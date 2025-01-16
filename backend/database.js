@@ -11,8 +11,10 @@ const db = new Database(path.join(__dirname, '..', 'compliance.db'));
 db.exec(`
     CREATE TABLE IF NOT EXISTS users (
         id TEXT PRIMARY KEY,
+        email TEXT UNIQUE,
         username TEXT UNIQUE,
         password TEXT,
+        usertype TEXT,
         modified_on TEXT,
         modified_by TEXT
     );

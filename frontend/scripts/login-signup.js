@@ -1,7 +1,7 @@
 // Login Form Submission
 document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const username = document.getElementById('username').value;
+    const email = document.getElementById('email').value; // Changed from username to email
     const password = document.getElementById('password').value;
     const messageElement = document.getElementById('message');
 
@@ -11,7 +11,7 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ username, password }),
+            body: JSON.stringify({ email, password }), // Changed from username to email
         });
         const data = await response.json();
         if (data.success) {
@@ -34,9 +34,11 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
 // Signup Form Submission
 document.getElementById('signupForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const email = document.getElementById('email').value;
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
+    const usertype = document.getElementById('usertype').value;
     const messageElement = document.getElementById('message');
 
     if (password !== confirmPassword) {
@@ -52,7 +54,7 @@ document.getElementById('signupForm')?.addEventListener('submit', async (e) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ username, password }),
+            body: JSON.stringify({ email, username, password, usertype }), // Include email
         });
         const data = await response.json();
         if (data.success) {
