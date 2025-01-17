@@ -104,6 +104,7 @@ function initializeForm() {
     // Create a single progress bar container
     const progressBarContainer = document.createElement('div');
     progressBarContainer.className = 'progress-bar-container';
+    progressBarContainer.style.display = 'none'; // Initially hide the progress bar
     const progressBar = document.createElement('div');
     progressBar.className = 'progress-bar';
     const progress = document.createElement('div');
@@ -132,6 +133,9 @@ function initializeForm() {
                 filePreview.style.display = 'flex';
                 uploadLabel.textContent = 'Change File';
 
+                // Show the progress bar
+                progressBarContainer.style.display = 'block';
+
                 // Reset progress bar
                 progress.style.width = '0%';
 
@@ -150,6 +154,7 @@ function initializeForm() {
                 filePreview.style.display = 'none';
                 uploadLabel.textContent = 'Upload Policy Document (PDF or Word)';
                 progress.style.width = '0%'; // Reset progress bar
+                progressBarContainer.style.display = 'none'; // Hide the progress bar
             }
         });
     }
