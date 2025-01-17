@@ -65,6 +65,9 @@ if (form && messageElement) {
         submitButton.classList.add('loading');
         submitButton.disabled = true;
 
+        // Show a loading animation for 2 seconds before submitting
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
         const userId = localStorage.getItem('userId');
         const username = localStorage.getItem('username');
         const submissionId = document.getElementById('submissionId').value;
