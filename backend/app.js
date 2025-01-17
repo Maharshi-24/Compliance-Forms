@@ -128,15 +128,14 @@ app.post('/submit-form', authenticateUser, upload.single('policy_document'), asy
             // Check if the submission is in "Needs revision" state
             const existingSubmission = db.prepare('SELECT * FROM information_security_policy WHERE user_id = ? AND review_status = ?').get(userId, 'Needs revision');
             if (existingSubmission) {
-                // Update the existing submission
+                // Update the existing submission (do not change upload_date)
                 query = `
                     UPDATE information_security_policy
-                    SET policy_title = ?, review_date = ?, comments = ?, review_status = 'review', file_id = ?, file_name = ?, modified_on = ?, modified_by = ?
+                    SET policy_title = ?, comments = ?, review_status = 'review', file_id = ?, file_name = ?, modified_on = ?, modified_by = ?
                     WHERE id = ?
                 `;
                 db.prepare(query).run(
                     req.body.policy_title,
-                    req.body.review_date,
                     req.body.comments,
                     fileId,
                     fileName,
@@ -145,15 +144,16 @@ app.post('/submit-form', authenticateUser, upload.single('policy_document'), asy
                     existingSubmission.id
                 );
             } else {
-                // Insert a new submission
+                // Insert a new submission (set upload_date to the current submission time)
                 query = `
                     INSERT INTO information_security_policy 
-                    (policy_title, review_date, reviewed_by, review_status, comments, user_id, uploaded_by, submission_time, modified_on, modified_by, file_id, file_name)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    (policy_title, review_date, upload_date, reviewed_by, review_status, comments, user_id, uploaded_by, submission_time, modified_on, modified_by, file_id, file_name)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 `;
                 db.prepare(query).run(
                     req.body.policy_title,
-                    req.body.review_date,
+                    null, // review_date is set to null initially
+                    submissionTime, // upload_date is set to the current submission time
                     '',
                     'review',
                     req.body.comments,

@@ -32,7 +32,8 @@ db.exec(`
     CREATE TABLE IF NOT EXISTS information_security_policy (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         policy_title TEXT,
-        review_date TEXT,
+        review_date TEXT, 
+        upload_date TEXT, 
         reviewed_by TEXT,
         review_status TEXT DEFAULT 'review',
         comments TEXT,
