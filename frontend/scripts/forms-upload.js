@@ -9,8 +9,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const lastSubmission = await fetchLastSubmission(formName);
     console.log('Last submission:', lastSubmission);
 
-    if (lastSubmission && lastSubmission.review_status === 'review') {
-        lockForm(lastSubmission);
+    // Check if the last submission is in "review" or "Needs revision" state
+    if (lastSubmission && (lastSubmission.review_status === 'review' || lastSubmission.review_status === 'Needs revision')) {
+        if (lastSubmission.review_status === 'Needs revision') {
+            // Unlock the form for editing
+            initializeForm();
+            populateForm(lastSubmission.id);
+        } else {
+            // Lock the form if the status is "review"
+            lockForm(lastSubmission);
+        }
     } else {
         initializeForm();
     }
@@ -85,7 +93,7 @@ function lockForm(lastSubmission) {
     }
 }
 
-// Initialize the form for new submissions
+// Initialize the form for new submissions or "Needs revision" state
 function initializeForm() {
     const fileInput = document.getElementById('policy_document');
     const filePreview = document.getElementById('file-preview');

@@ -114,42 +114,59 @@ app.post('/submit-form', authenticateUser, upload.single('policy_document'), asy
     const userId = req.userId;
     const user = db.prepare('SELECT username FROM users WHERE id = ?').get(userId);
     if (!user) {
-      return res.status(400).json({ error: 'User not found' });
+        return res.status(400).json({ error: 'User not found' });
     }
     const submissionTime = new Date().toISOString();
 
     console.log('Received form submission:', formName, req.body);
     let query = '';
     switch (formName) {
-      case 'Information Security Policy Review':
-        const fileId = path2.parse(req.file.filename).name;
-        query = `
-          INSERT INTO information_security_policy 
-          (policy_title, review_date, reviewed_by, review_status, comments, user_id, uploaded_by, submission_time, modified_on, modified_by, file_id, file_name)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `;
-        const result = db.prepare(query).run(
-          req.body.policy_title,
-          req.body.review_date,
-          '',
-          'review',
-          req.body.comments,
-          userId,
-          user.username,
-          submissionTime,
-          submissionTime,
-          user.username,
-          fileId,
-          req.file.originalname
-        );
+        case 'Information Security Policy Review':
+            const fileId = req.file ? path2.parse(req.file.filename).name : null;
+            const fileName = req.file ? req.file.originalname : null;
 
-        // Insert file info
-        db.prepare(`
-          INSERT INTO file_info (file_id, original_filename, user_id, form_id, form_type)
-          VALUES (?, ?, ?, ?, ?)
-        `).run(fileId, req.file.originalname, userId, result.lastInsertRowid, 'information_security_policy');
-
-        break;
+            // Check if the submission is in "Needs revision" state
+            const existingSubmission = db.prepare('SELECT * FROM information_security_policy WHERE user_id = ? AND review_status = ?').get(userId, 'Needs revision');
+            if (existingSubmission) {
+                // Update the existing submission
+                query = `
+                    UPDATE information_security_policy
+                    SET policy_title = ?, review_date = ?, comments = ?, review_status = 'review', file_id = ?, file_name = ?, modified_on = ?, modified_by = ?
+                    WHERE id = ?
+                `;
+                db.prepare(query).run(
+                    req.body.policy_title,
+                    req.body.review_date,
+                    req.body.comments,
+                    fileId,
+                    fileName,
+                    submissionTime,
+                    user.username,
+                    existingSubmission.id
+                );
+            } else {
+                // Insert a new submission
+                query = `
+                    INSERT INTO information_security_policy 
+                    (policy_title, review_date, reviewed_by, review_status, comments, user_id, uploaded_by, submission_time, modified_on, modified_by, file_id, file_name)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                `;
+                db.prepare(query).run(
+                    req.body.policy_title,
+                    req.body.review_date,
+                    '',
+                    'review',
+                    req.body.comments,
+                    userId,
+                    user.username,
+                    submissionTime,
+                    submissionTime,
+                    user.username,
+                    fileId,
+                    fileName
+                );
+            }
+            break;
 
       case 'Information Security Roles':
         const fileIdRoles = path2.parse(req.file.filename).name;
