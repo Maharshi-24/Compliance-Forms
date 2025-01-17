@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Acquisition, Development, and Maintenance</title>
+    <link rel="stylesheet" type="text/css" href="../css/forms.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">INOXCVA</div>
+        <div class="navbar-links">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/extract-data.html" class="nav-link">Extract Data</a>
+        </div>
+    </nav>
+    
+<div class="container">
+    <h1>System Acquisition, Development, and Maintenance</h1>
+    <button id="editButton">Edit Previous Submission</button>
+    <form id="form10" enctype="multipart/form-data">
+        <input type="hidden" id="submissionId" name="submissionId">
+        <input type="hidden" id="formName" name="formName" value="System Acquisition, Development, and Maintenance">
+        
+        <div class="form-group">
+            <label for="project_name">Project Name:</label>
+            <input type="text" id="project_name" name="project_name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required>
+        </div>
+
+        <div class="form-group">
+            <label for="security_requirements_defined">Security Requirements Defined:</label>
+            <select id="security_requirements_defined" name="security_requirements_defined" required>
+                <option value="">Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="secure_coding_practices_followed">Secure Coding Practices Followed:</label>
+            <select id="secure_coding_practices_followed" name="secure_coding_practices_followed" required>
+                <option value="">Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="code_review_conducted">Code Review Conducted:</label>
+            <select id="code_review_conducted" name="code_review_conducted" required>
+                <option value="">Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="testing_for_vulnerabilities">Testing for Vulnerabilities:</label>
+            <select id="testing_for_vulnerabilities" name="testing_for_vulnerabilities" required>
+                <option value="">Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="security_features_implemented">Security Features Implemented:</label>
+            <textarea id="security_features_implemented" name="security_features_implemented" rows="4" required></textarea>
+            <small>(e.g., authentication, encryption, validation for injection, session management, RBAC, etc.)</small>
+        </div>
+
+        <div class="form-group">
+            <label for="comments">Comments:</label>
+            <textarea id="comments" name="comments" rows="4"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="risk_feasibility_assessment">Risk/Feasibility Assessment Completed:</label>
+            <select id="risk_feasibility_assessment" name="risk_feasibility_assessment" required>
+                <option value="">Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+            <small>(For new system before deployment)</small>
+        </div>
+
+        <div class="form-group">
+            <label for="secure_development_checklist">Secure Development Checklist Completed:</label>
+            <select id="secure_development_checklist" name="secure_development_checklist" required>
+                <option value="">Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+            <small>(To confirm the application of security protocols)</small>
+        </div>
+
+        <!-- Updated File Upload Section -->
+        <div class="form-group file-upload">
+            <label for="policy_document">
+                <span id="upload-label">Upload Development Document (PDF or Word)</span>
+                <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
+            </label>
+            <div id="file-preview" class="file-preview" style="display: none;">
+                <img id="file-icon" src="" alt="File Icon">
+                <span id="file-name">No file selected</span>
+            </div>
+        </div>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="message" class="message" style="display: none;"></div>
+</div>
+
+<script src="../scripts/forms.js"></script>
+</body>
+</html>

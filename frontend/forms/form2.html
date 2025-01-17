@@ -1,230 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Information Security Roles</title>
-  <link rel="stylesheet" type="text/css" href="../css/forms.css">
-  <style>
-    .file-upload {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    .file-upload label {
-      display: inline-block;
-      padding: 8px 12px;
-      cursor: pointer;
-      background-color: #f0f0f0;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      transition: background-color 0.3s;
-    }
-    .file-upload label:hover {
-      background-color: #e0e0e0;
-    }
-    .file-upload input[type="file"] {
-      display: none;
-    }
-    .file-name {
-      margin-top: 8px;
-      font-style: italic;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Information Security Roles</title>
+    <link rel="stylesheet" type="text/css" href="../css/forms.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-  <div class="container">
-      <h1>Information Security Roles</h1>
-      <button id="editButton">Edit Previous Submission</button>
-      <form id="form2" enctype="multipart/form-data">
-          <input type="hidden" id="submissionId" name="submissionId">
-          <input type="hidden" id="formName" name="formName" value="Information Security Roles">
-          <div class="form-group">
-              <label for="role">Role:</label>
-              <select id="role" name="role" required>
-                  <option value="">Select a role</option>
-              </select>
-          </div>
-          <div class="form-group">
-              <label for="responsible_person">Responsible Person:</label>
-              <input type="text" id="responsible_person" name="responsible_person" required>
-          </div>
-          <div class="form-group">
-              <label for="security_responsibilities">Security Responsibilities:</label>
-              <textarea id="security_responsibilities" name="security_responsibilities" rows="4" required></textarea>
-          </div>
-          <div class="form-group">
-              <label for="date_assigned">Date Assigned:</label>
-              <input type="date" id="date_assigned" name="date_assigned" required>
-          </div>
-          <div class="form-group">
-              <label for="review_frequency">Review Frequency:</label>
-              <input type="text" id="review_frequency" name="review_frequency" required>
-          </div>
-          <div class="form-group">
-              <label for="comments">Comments:</label>
-              <textarea id="comments" name="comments" rows="4"></textarea>
-          </div>
-          <div class="form-group file-upload">
-              <label for="policy_document">
-                  <span id="upload-label">Upload Policy Document (PDF or Word)</span>
-                  <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
-              </label>
-              <span id="file-name" class="file-name"></span>
-          </div>
-          <button type="submit">Submit</button>
-      </form>
-      <div id="message" class="message" style="display: none;"></div>
-  </div>
+<nav class="navbar">
+    <div class="navbar-brand">INOXCVA</div>
+    <div class="navbar-links">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/extract-data.html" class="nav-link">Extract Data</a>
+    </div>
+</nav>
 
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const userId = localStorage.getItem('userId');
-    if (!userId) {
-      window.location.href = '/login.html';
-    }
-
-    const form = document.getElementById('form2');
-    const editButton = document.getElementById('editButton');
-    const messageElement = document.getElementById('message');
-    const roleSelect = document.getElementById('role');
-    const fileInput = document.getElementById('policy_document');
-    const fileNameSpan = document.getElementById('file-name');
-    const uploadLabel = document.getElementById('upload-label');
-
-    fileInput.addEventListener('change', (e) => {
-      if (e.target.files.length > 0) {
-        fileNameSpan.textContent = e.target.files[0].name;
-        uploadLabel.textContent = 'Change Policy Document';
-      } else {
-        fileNameSpan.textContent = '';
-        uploadLabel.textContent = 'Upload Policy Document (PDF or Word)';
-      }
-    });
-
-    // Fetch roles and populate the select element
-    async function fetchRoles() {
-      try {
-        const response = await fetch('/api/roles', {
-          headers: { 'User-ID': userId }
-        });
-        const roles = await response.json();
-        roles.forEach(role => {
-          const option = document.createElement('option');
-          option.value = role.role_name;
-          option.textContent = role.role_name;
-          roleSelect.appendChild(option);
-        });
-      } catch (error) {
-        console.error('Error fetching roles:', error);
-      }
-    }
-
-    fetchRoles();
-
-    editButton.addEventListener('click', async () => {
-      const submissions = await fetchUserSubmissions();
-      if (submissions.length > 0) {
-        const selectedSubmission = await selectSubmission(submissions);
-        if (selectedSubmission) {
-          await populateForm(selectedSubmission.id);
-        }
-      } else {
-        alert('No previous submissions found.');
-      }
-    });
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const userId = localStorage.getItem('userId');
-      const submissionId = document.getElementById('submissionId').value;
-
-      try {
-        const endpoint = submissionId ? '/edit-form' : '/submit-form';
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 
-            'User-ID': userId
-          },
-          body: formData,
-        });
-        const result = await response.json();
-        if (result.success) {
-          messageElement.textContent = submissionId ? 'Form updated successfully!' : 'Form submitted successfully!';
-          messageElement.style.display = 'block';
-          messageElement.className = 'message success';
-          form.reset();
-          document.getElementById('submissionId').value = '';
-          fileNameSpan.textContent = '';
-          uploadLabel.textContent = 'Upload Policy Document (PDF or Word)';
-        } else {
-          throw new Error(result.error || 'Unknown error');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        messageElement.textContent = `Error: ${error.message}`;
-        messageElement.style.display = 'block';
-        messageElement.className = 'message error';
-      }
-    });
-
-    async function fetchUserSubmissions() {
-      const response = await fetch(`/api/user-submissions?formName=Information Security Roles`, {
-        headers: { 'User-ID': localStorage.getItem('userId') }
-      });
-      return await response.json();
-    }
-
-    async function selectSubmission(submissions) {
-      const options = submissions.map(s => `<option value="${s.id}">${s.role} - ${s.responsible_person} (${new Date(s.submission_time).toLocaleString()})</option>`).join('');
-      const result = await new Promise(resolve => {
-        const dialog = document.createElement('dialog');
-        dialog.innerHTML = `
-          <form method="dialog">
-            <h2>Select a submission to edit</h2>
-            <select name="submissionId">
-              ${options}
+<div class="container">
+    <h1>Information Security Roles</h1>
+    <button id="editButton">Edit Previous Submission</button>
+    <form id="form2" enctype="multipart/form-data">
+        <input type="hidden" id="submissionId" name="submissionId">
+        <input type="hidden" id="formName" name="formName" value="Information Security Roles">
+        <div class="form-group">
+            <label for="role">Role:</label>
+            <select id="role" name="role" required>
+                <option value="">Select a role</option>
             </select>
-            <div>
-              <button value="cancel">Cancel</button>
-              <button value="confirm">Confirm</button>
-            </div>
-          </form>
-        `;
-        dialog.addEventListener('close', () => {
-          resolve(dialog.returnValue === 'confirm' ? { id: dialog.querySelector('select').value } : null);
-          dialog.remove();
-        });
-        document.body.appendChild(dialog);
-        dialog.showModal();
-      });
-      return result;
-    }
+        </div>
+        <div class="form-group">
+            <label for="responsible_person">Responsible Person:</label>
+            <input type="text" id="responsible_person" name="responsible_person" required>
+        </div>
+        <div class="form-group">
+            <label for="security_responsibilities">Security Responsibilities:</label>
+            <textarea id="security_responsibilities" name="security_responsibilities" rows="4" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="date_assigned">Date Assigned:</label>
+            <input type="date" id="date_assigned" name="date_assigned" required>
+        </div>
+        <div class="form-group">
+            <label for="review_frequency">Review Frequency:</label>
+            <input type="text" id="review_frequency" name="review_frequency" required>
+        </div>
+        <div class="form-group">
+            <label for="comments">Comments:</label>
+            <textarea id="comments" name="comments" rows="4"></textarea>
+        </div>
 
-    async function populateForm(submissionId) {
-      const response = await fetch(`/api/submission/Information Security Roles/${submissionId}`, {
-        headers: { 'User-ID': localStorage.getItem('userId') }
-      });
-      const submission = await response.json();
-      
-      document.getElementById('submissionId').value = submission.id;
-      document.getElementById('role').value = submission.role;
-      document.getElementById('responsible_person').value = submission.responsible_person;
-      document.getElementById('security_responsibilities').value = submission.security_responsibilities;
-      document.getElementById('date_assigned').value = submission.date_assigned;
-      document.getElementById('review_frequency').value = submission.review_frequency;
-      document.getElementById('comments').value = submission.comments;
-      
-      if (submission.file_name) {
-        fileNameSpan.textContent = `Current file: ${submission.file_name}`;
-        uploadLabel.textContent = 'Change Policy Document';
-      } else {
-        fileNameSpan.textContent = 'No file currently uploaded';
-        uploadLabel.textContent = 'Upload Policy Document (PDF or Word)';
-      }
-    }
-  });
-  </script>
+        <!-- File Upload Section -->
+        <div class="form-group file-upload">
+            <label for="policy_document">
+                <span id="upload-label">Upload Policy Document (PDF or Word)</span>
+                <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
+            </label>
+            <div id="file-preview" class="file-preview" style="display: none;">
+                <img id="file-icon" src="" alt="File Icon">
+                <span id="file-name">No file selected</span>
+            </div>
+        </div>
+
+        <button type="submit">Submit</button>
+    </form>
+    <div id="message" class="message" style="display: none;"></div>
+</div>
+
+<script src="../scripts/forms.js"></script>
 </body>
 </html>

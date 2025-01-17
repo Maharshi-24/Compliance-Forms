@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Communications Security</title>
+    <link rel="stylesheet" type="text/css" href="../css/forms.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">INOXCVA</div>
+        <div class="navbar-links">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/extract-data.html" class="nav-link">Extract Data</a>
+        </div>
+    </nav>
+
+<div class="container">
+    <h1>Communications Security</h1>
+    <button id="editButton">Edit Previous Submission</button>
+    <form id="form9" enctype="multipart/form-data">
+        <input type="hidden" id="submissionId" name="submissionId">
+        <input type="hidden" id="formName" name="formName" value="Communications Security">
+        
+        <div class="form-group">
+            <label for="date_of_incident">Date of Incident:</label>
+            <input type="date" id="date_of_incident" name="date_of_incident" required>
+        </div>
+
+        <div class="form-group">
+            <label for="incident_description">Incident Description:</label>
+            <textarea id="incident_description" name="incident_description" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="system_network_affected">System/Network Affected:</label>
+            <input type="text" id="system_network_affected" name="system_network_affected" required>
+        </div>
+
+        <div class="form-group">
+            <label for="incident_response_actions">Incident Response Actions:</label>
+            <textarea id="incident_response_actions" name="incident_response_actions" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="status">Status:</label>
+            <select id="status" name="status" required>
+                <option value="">Select status</option>
+                <option value="Resolved">Resolved</option>
+                <option value="Pending">Pending</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="severity_level">Severity Level:</label>
+            <select id="severity_level" name="severity_level" required>
+                <option value="">Select severity</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="incident_handler">Incident Handler:</label>
+            <input type="text" id="incident_handler" name="incident_handler" required>
+        </div>
+
+        <div class="form-group">
+            <label for="resolution_date">Resolution Date:</label>
+            <input type="date" id="resolution_date" name="resolution_date">
+        </div>
+
+        <div class="form-group">
+            <label for="encryption_standard">Encryption Standard:</label>
+            <input type="text" id="encryption_standard" name="encryption_standard" value="AES-256" readonly>
+            <small>(For ensuring compliance with cryptographic standards)</small>
+        </div>
+
+        <div class="form-group">
+            <label for="communication_monitoring">Communication Channel Monitoring:</label>
+            <textarea id="communication_monitoring" name="communication_monitoring" rows="4" required></textarea>
+            <small>(Monitoring to ensure secure transmissions)</small>
+        </div>
+
+        <!-- File Upload Section -->
+        <div class="form-group file-upload">
+            <label for="policy_document">
+                <span id="upload-label">Upload Incident Report Document (PDF or Word)</span>
+                <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
+            </label>
+            <div id="file-preview" class="file-preview" style="display: none;">
+                <img id="file-icon" src="" alt="File Icon">
+                <span id="file-name">No file selected</span>
+            </div>
+        </div>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="message" class="message" style="display: none;"></div>
+</div>
+
+<script src="../scripts/forms.js"></script>
+</body>
+</html>

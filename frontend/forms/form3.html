@@ -5,34 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Screening and Training</title>
     <link rel="stylesheet" type="text/css" href="../css/forms.css">
-    <style>
-        .file-upload {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        .file-upload label {
-            display: inline-block;
-            padding: 8px 12px;
-            cursor: pointer;
-            background-color: #f0f0f0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-        .file-upload label:hover {
-            background-color: #e0e0e0;
-        }
-        .file-upload input[type="file"] {
-            display: none;
-        }
-        .file-name {
-            margin-top: 8px;
-            font-style: italic;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+    <nav class="navbar">
+        <div class="navbar-brand">INOXCVA</div>
+        <div class="navbar-links">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/extract-data.html" class="nav-link">Extract Data</a>
+        </div>
+    </nav>
+
     <div class="container">
         <h1>Employee Screening and Training</h1>
         <button id="editButton">Edit Previous Submission</button>
@@ -80,167 +63,24 @@
                     <option value="In Progress">In Progress</option>
                 </select>
             </div>
+
+            <!-- File Upload Section -->
             <div class="form-group file-upload">
                 <label for="policy_document">
                     <span id="upload-label">Upload Policy Document (PDF or Word)</span>
                     <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
                 </label>
-                <span id="file-name" class="file-name"></span>
+                <div id="file-preview" class="file-preview" style="display: none;">
+                    <img id="file-icon" src="" alt="File Icon">
+                    <span id="file-name">No file selected</span>
+                </div>
             </div>
+
             <button type="submit">Submit</button>
         </form>
         <div id="message" class="message" style="display: none;"></div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const userId = localStorage.getItem('userId');
-            if (!userId) {
-                window.location.href = '/login.html';
-            }
 
-            const form = document.getElementById('form3');
-            const editButton = document.getElementById('editButton');
-            const messageElement = document.getElementById('message');
-            const fileInput = document.getElementById('policy_document');
-            const fileNameSpan = document.getElementById('file-name');
-            const uploadLabel = document.getElementById('upload-label');
-            const positionSelect = document.getElementById('position');
-
-            // Fetch roles and populate the position dropdown
-            async function fetchRoles() {
-                try {
-                    const response = await fetch('/api/roles', {
-                        headers: { 'User-ID': userId }
-                    });
-                    const roles = await response.json();
-                    roles.forEach(role => {
-                        const option = document.createElement('option');
-                        option.value = role.role_name;
-                        option.textContent = role.role_name;
-                        positionSelect.appendChild(option);
-                    });
-                } catch (error) {
-                    console.error('Error fetching roles:', error);
-                }
-            }
-
-            fetchRoles();
-
-            fileInput.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) {
-                    fileNameSpan.textContent = e.target.files[0].name;
-                    uploadLabel.textContent = 'Change Policy Document';
-                } else {
-                    fileNameSpan.textContent = '';
-                    uploadLabel.textContent = 'Upload Policy Document (PDF or Word)';
-                }
-            });
-
-            editButton.addEventListener('click', async () => {
-                const submissions = await fetchUserSubmissions();
-                if (submissions.length > 0) {
-                    const selectedSubmission = await selectSubmission(submissions);
-                    if (selectedSubmission) {
-                        await populateForm(selectedSubmission.id);
-                    }
-                } else {
-                    alert('No previous submissions found.');
-                }
-            });
-
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                const userId = localStorage.getItem('userId');
-                const submissionId = document.getElementById('submissionId').value;
-
-                try {
-                    const endpoint = submissionId ? '/edit-form' : '/submit-form';
-                    const response = await fetch(endpoint, {
-                        method: 'POST',
-                        headers: { 
-                            'User-ID': userId
-                        },
-                        body: formData,
-                    });
-                    const result = await response.json();
-                    if (result.success) {
-                        messageElement.textContent = submissionId ? 'Form updated successfully!' : 'Form submitted successfully!';
-                        messageElement.style.display = 'block';
-                        messageElement.className = 'message success';
-                        form.reset();
-                        document.getElementById('submissionId').value = '';
-                        fileNameSpan.textContent = '';
-                        uploadLabel.textContent = 'Upload Policy Document (PDF or Word)';
-                    } else {
-                        throw new Error(result.error || 'Unknown error');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    messageElement.textContent = `Error: ${error.message}`;
-                    messageElement.style.display = 'block';
-                    messageElement.className = 'message error';
-                }
-            });
-
-            async function fetchUserSubmissions() {
-                const response = await fetch(`/api/user-submissions?formName=Employee Screening and Training`, {
-                    headers: { 'User-ID': localStorage.getItem('userId') }
-                });
-                return await response.json();
-            }
-
-            async function selectSubmission(submissions) {
-                const options = submissions.map(s => `<option value="${s.id}">${s.employee_name} (${new Date(s.submission_time).toLocaleString()})</option>`).join('');
-                const result = await new Promise(resolve => {
-                    const dialog = document.createElement('dialog');
-                    dialog.innerHTML = `
-                        <form method="dialog">
-                            <h2>Select a submission to edit</h2>
-                            <select name="submissionId">
-                                ${options}
-                            </select>
-                            <div>
-                                <button value="cancel">Cancel</button>
-                                <button value="confirm">Confirm</button>
-                            </div>
-                        </form>
-                    `;
-                    dialog.addEventListener('close', () => {
-                        resolve(dialog.returnValue === 'confirm' ? { id: dialog.querySelector('select').value } : null);
-                        dialog.remove();
-                    });
-                    document.body.appendChild(dialog);
-                    dialog.showModal();
-                });
-                return result;
-            }
-
-            async function populateForm(submissionId) {
-                const response = await fetch(`/api/submission/Employee Screening and Training/${submissionId}`, {
-                    headers: { 'User-ID': localStorage.getItem('userId') }
-                });
-                const submission = await response.json();
-                
-                document.getElementById('submissionId').value = submission.id;
-                document.getElementById('employee_name').value = submission.employee_name;
-                document.getElementById('employee_id').value = submission.employee_id;
-                document.getElementById('position').value = submission.position;
-                document.getElementById('screening_date').value = submission.screening_date;
-                document.getElementById('training_completed').value = submission.training_completed;
-                document.getElementById('training_date').value = submission.training_date;
-                document.getElementById('termination_date').value = submission.termination_date;
-                document.getElementById('training_status').value = submission.training_status;
-                
-                if (submission.file_name) {
-                    fileNameSpan.textContent = `Current file: ${submission.file_name}`;
-                    uploadLabel.textContent = 'Change Policy Document';
-                } else {
-                    fileNameSpan.textContent = 'No file currently uploaded';
-                    uploadLabel.textContent = 'Upload Policy Document (PDF or Word)';
-                }
-            }
-        });
-    </script>
+    <script src="../scripts/forms.js"></script>
 </body>
 </html>

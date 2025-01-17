@@ -6,8 +6,15 @@
     <title>Extract Form Data</title>
     <link rel="stylesheet" href="css/extract.css">
     <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+    <nav class="navbar">
+        <div class="navbar-brand">INOXCVA</div>
+        <div class="navbar-links">
+            <a href="/" class="nav-link">Home</a>
+        </div>
+    </nav>
     <div class="container">
         <h1>Extract Form Data</h1>
         <form id="extractForm">
@@ -15,19 +22,19 @@
             <select id="formSelect" name="formName" required>
                 <option value="">Select a form</option>
                 <option value="information_security_policy">Information Security Policy Review</option>
-                <option value="information_security_roles">Information Security Roles</option>
+                <option value="information_security_roles">Information Security Roles and Responsibilities Record</option>
                 <option value="employee_screening">Employee Screening and Training</option>
                 <option value="asset_management">Asset Management</option>
                 <option value="access_control">Access Control</option>
                 <option value="cryptography_controls">Cryptographic Controls</option>
                 <option value="physical_security">Physical Security</option>
                 <option value="operations_security">Operations Security</option>
-                <option value="network_incidents">Network Incidents</option>
-                <option value="development_checklist">Development Checklist</option>
-                <option value="supplier_assessments">Supplier Assessments</option>
-                <option value="incident_responses">Incident Responses</option>
-                <option value="business_continuity">Business Continuity</option>
-                <option value="compliance_checklist">Compliance Checklist</option>
+                <option value="communications_security">Network Security Incident</option>
+                <option value="system_acquisition">Secure Development Checklist</option>
+                <option value="supplier_relationships">Supplier Security Assessment </option>
+                <option value="incident_management">Incident Response Report</option>
+                <option value="business_continuity">Business Continuity Plan Testing Log</option>
+                <option value="compliance">Legal and Regulatory Compliance Checklist</option>
             </select>
             <button type="submit">Extract Data</button>
         </form>
@@ -35,56 +42,6 @@
         <div id="downloadLinks"></div>
     </div>
 
-    <script>
-        document.getElementById('extractForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formName = document.getElementById('formSelect').value;
-            const messageDiv = document.getElementById('message');
-            const downloadLinksDiv = document.getElementById('downloadLinks');
-            messageDiv.textContent = 'Extracting data...';
-            downloadLinksDiv.innerHTML = '';
-
-            try {
-                const response = await fetch(`/api/extract-data?formName=${formName}`, {
-                    headers: {
-                        'User-ID': localStorage.getItem('userId')
-                    }
-                });
-                if (!response.ok) {
-                    throw new Error('Failed to fetch data');
-                }
-                const data = await response.json();
-
-                // Prepare data for Excel, excluding file content
-                const excelData = data.map(item => {
-                    const { file_content, ...rest } = item;
-                    return rest;
-                });
-
-                const ws = XLSX.utils.json_to_sheet(excelData);
-
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-
-                const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-                const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `${formName}_data.xlsx`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-
-                messageDiv.textContent = 'Data extracted and downloaded successfully!';
-            } catch (error) {
-                console.error('Error:', error);
-                messageDiv.textContent = 'An error occurred while extracting data.';
-            }
-        });
-    </script>
+    <script src="scripts/extract-data.js"></script>
 </body>
 </html>
-

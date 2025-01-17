@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Continuity Management</title>
+    <link rel="stylesheet" type="text/css" href="../css/forms.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">INOXCVA</div>
+        <div class="navbar-links">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/extract-data.html" class="nav-link">Extract Data</a>
+        </div>
+    </nav>
+
+<div class="container">
+    <h1>Information Security Aspects of Business Continuity Management</h1>
+    <button id="editButton">Edit Previous Submission</button>
+    <form id="form13" enctype="multipart/form-data">
+        <input type="hidden" id="submissionId" name="submissionId">
+        <input type="hidden" id="formName" name="formName" value="Business Continuity Management">
+        
+        <div class="form-group">
+            <label for="test_date">Test Date:</label>
+            <input type="date" id="test_date" name="test_date" required>
+        </div>
+
+        <div class="form-group">
+            <label for="test_objective">Test Objective:</label>
+            <textarea id="test_objective" name="test_objective" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="test_scenario">Test Scenario:</label>
+            <textarea id="test_scenario" name="test_scenario" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="outcome">Outcome:</label>
+            <select id="outcome" name="outcome" required>
+                <option value="">Select outcome</option>
+                <option value="Pass">Pass</option>
+                <option value="Fail">Fail</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="issues_identified">Issues Identified:</label>
+            <textarea id="issues_identified" name="issues_identified" rows="4"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="follow_up_actions">Follow-up Actions:</label>
+            <textarea id="follow_up_actions" name="follow_up_actions" rows="4"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="tested_by">Tested By:</label>
+            <input type="text" id="tested_by" name="tested_by" required>
+        </div>
+
+        <div class="form-group">
+            <label for="next_test_date">Next Test Date:</label>
+            <input type="date" id="next_test_date" name="next_test_date">
+        </div>
+
+        <div class="form-group">
+            <label for="alternative_location">Alternative Location for Storage Communication:</label>
+            <input type="text" id="alternative_location" name="alternative_location" required>
+            <small>(For effective crisis communication and safety of the data)</small>
+        </div>
+
+        <div class="form-group">
+            <label for="continuity_test_results">Continuity Test Results:</label>
+            <textarea id="continuity_test_results" name="continuity_test_results" rows="4"></textarea>
+            <small>(For reviewing and testing)</small>
+        </div>
+
+        <!-- Updated File Upload Section -->
+        <div class="form-group file-upload">
+            <label for="policy_document">
+                <span id="upload-label">Upload Continuity Plan Document (PDF or Word)</span>
+                <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
+            </label>
+            <div id="file-preview" class="file-preview" style="display: none;">
+                <img id="file-icon" src="" alt="File Icon">
+                <span id="file-name">No file selected</span>
+            </div>
+        </div>
+
+        <button type="submit">Submit Continuity Test Log</button>
+    </form>
+
+    <div id="message" class="message" style="display: none;"></div>
+</div>
+
+<script src="../scripts/forms.js"></script>
+</body>
+</html>
