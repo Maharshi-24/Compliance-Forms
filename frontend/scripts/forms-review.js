@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const lastSubmission = await fetchLastSubmission(formName);
 
     if (lastSubmission && lastSubmission.review_status === 'review') {
-        populateForm(lastSubmission);
+        populateForm(lastSubmission); // Pass the entire submission object
     } else {
         showMessage('No pending reviews found.', 'info');
     }
@@ -31,9 +31,10 @@ async function fetchLastSubmission(formName) {
 
 // Populate form with submission data
 function populateForm(submission) {
+    console.log('Submission data:', submission); // Debugging: Log the submission data
+
     document.getElementById('submissionId').value = submission.id;
     document.getElementById('policy_title').value = submission.policy_title;
-    document.getElementById('review_date').value = submission.review_date;
     document.getElementById('comments').value = submission.comments;
 
     // Handle file preview
@@ -50,7 +51,10 @@ function populateForm(submission) {
         }
 
         fileNameSpan.textContent = submission.file_name;
-        filePreview.style.display = 'flex';
+        filePreview.style.display = 'flex'; // Ensure the file preview is visible
+    } else {
+        fileNameSpan.textContent = 'No file currently uploaded';
+        filePreview.style.display = 'none'; // Hide the file preview if no file is uploaded
     }
 }
 
@@ -72,10 +76,13 @@ if (form && messageElement) {
         const username = localStorage.getItem('username');
         const submissionId = document.getElementById('submissionId').value;
 
+        // Automatically set the review date to the current date
+        const reviewDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+
         // Prepare the data to be sent
         const updatedData = {
             policy_title: document.getElementById('policy_title').value,
-            review_date: document.getElementById('review_date').value,
+            review_date: reviewDate, // Automatically set the review date
             review_status: document.getElementById('review_status').value,
             comments: document.getElementById('comments').value,
             reviewed_by: username, // Automatically set the reviewer
