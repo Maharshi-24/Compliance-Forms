@@ -12,44 +12,20 @@
     <div class="navbar-brand">INOXCVA</div>
     <div class="navbar-links">
         <a href="/" class="nav-link">Home</a>
-        <a href="/extract-data.html" class="nav-link">Extract Data</a>
+        <a href="../extract-data.html" class="nav-link">Extract Data</a>
     </div>
 </nav>
-    
+
 <div class="container">
     <h1>Information Security Policy Review</h1>
-    <button id="editButton">Edit Previous Submission</button>
     <form id="form1" enctype="multipart/form-data">
         <input type="hidden" id="submissionId" name="submissionId">
         <input type="hidden" id="formName" name="formName" value="Information Security Policy Review">
+
+        <!-- Policy Title -->
         <div class="form-group">
             <label for="policy_title">Policy Title:</label>
             <input type="text" id="policy_title" name="policy_title" required>
-        </div>
-
-        <div class="form-group">
-            <label for="review_date">Review Date:</label>
-            <input type="date" id="review_date" name="review_date" required>
-        </div>
-
-        <div class="form-group">
-            <label for="reviewed_by">Reviewed By:</label>
-            <input type="text" id="reviewed_by" name="reviewed_by" required>
-        </div>
-
-        <div class="form-group">
-            <label for="review_outcome">Review Outcome:</label>
-            <select id="review_outcome" name="review_outcome" required>
-                <option value="">Select an outcome</option>
-                <option value="Approved">Approved</option>
-                <option value="Needs Revision">Needs Revision</option>
-                <option value="Rejected">Rejected</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="comments">Comments:</label>
-            <textarea id="comments" name="comments" rows="4"></textarea>
         </div>
 
         <!-- File Upload Section -->
@@ -64,12 +40,18 @@
             </div>
         </div>
 
-        <button type="submit">Submit Review</button>
+        <!-- Comments -->
+        <div class="form-group">
+            <label for="comments">Comments:</label>
+            <textarea id="comments" name="comments" rows="4"></textarea>
+        </div>
+
+        <button type="submit">Submit Changes</button>
     </form>
 
     <div id="message" class="message" style="display: none;"></div>
 </div>
 
-<script src="../scripts/forms.js"></script>
+<script src="../scripts/forms-upload.js"></script>
 </body>
 </html>

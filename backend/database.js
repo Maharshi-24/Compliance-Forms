@@ -11,8 +11,10 @@ const db = new Database(path.join(__dirname, '..', 'compliance.db'));
 db.exec(`
     CREATE TABLE IF NOT EXISTS users (
         id TEXT PRIMARY KEY,
+        email TEXT UNIQUE,
         username TEXT UNIQUE,
         password TEXT,
+        usertype TEXT,
         modified_on TEXT,
         modified_by TEXT
     );
@@ -30,12 +32,13 @@ db.exec(`
     CREATE TABLE IF NOT EXISTS information_security_policy (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         policy_title TEXT,
-        review_date TEXT,
+        review_date TEXT, 
+        upload_date TEXT, 
         reviewed_by TEXT,
-        review_outcome TEXT,
+        review_status TEXT DEFAULT 'review',
         comments TEXT,
         user_id TEXT,
-        username TEXT,
+        uploaded_by TEXT,
         submission_time TEXT,
         modified_on TEXT,
         modified_by TEXT,

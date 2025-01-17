@@ -73,6 +73,41 @@ body {
   }
 }
 
+/* Add this to forms.css */
+.message.info {
+  border-left-color: #3b82f6;
+  background-color: #f0f4f8;
+  color: #1e3a8a;
+  display: block !important; /* Ensure the message is always visible */
+  margin-bottom: 20px; /* Add some spacing */
+  padding: 12px; /* Add padding for better readability */
+  border-radius: 6px; /* Match the form's border radius */
+}
+
+form[disabled] {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+form[disabled] input,
+form[disabled] textarea,
+form[disabled] select {
+  background-color: #f9fafb;
+  cursor: not-allowed;
+}
+
+/* Hide the label (blue button) when the form is locked */
+form[disabled] .file-upload label {
+  display: none !important; /* Ensure the label is hidden */
+}
+
+/* Ensure the file preview is visible but not interactive */
+.file-preview {
+  display: flex;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
 h1 {
   color: #111827;
   text-align: center;

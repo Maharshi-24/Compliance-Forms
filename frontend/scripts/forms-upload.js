@@ -1,10 +1,100 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const userId = localStorage.getItem('userId');
     if (!userId) {
         window.location.href = '/login.html';
     }
 
-    // Common file upload logic
+    // Fetch the last submission's review status (globally)
+    const formName = document.getElementById('formName').value;
+    const lastSubmission = await fetchLastSubmission(formName);
+    console.log('Last submission:', lastSubmission);
+
+    // Check if the last submission is in "review" or "Needs revision" state
+    if (lastSubmission && (lastSubmission.review_status === 'review' || lastSubmission.review_status === 'Needs revision')) {
+        if (lastSubmission.review_status === 'Needs revision') {
+            // Unlock the form for editing
+            initializeForm();
+            populateForm(lastSubmission.id);
+        } else {
+            // Lock the form if the status is "review"
+            lockForm(lastSubmission);
+        }
+    } else {
+        initializeForm();
+    }
+});
+
+// Fetch the last submission for the current form (globally)
+async function fetchLastSubmission(formName) {
+    try {
+        const response = await fetch(`/api/last-submission/${formName}`, {
+            headers: { 'User-ID': localStorage.getItem('userId') }
+        });
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching last submission:', error);
+        return null;
+    }
+}
+
+// Lock the form if the last submission is in review state
+function lockForm(lastSubmission) {
+    const form = document.querySelector('form');
+    const submitButton = form.querySelector('button[type="submit"]');
+    const fileInput = document.getElementById('policy_document');
+    const filePreview = document.getElementById('file-preview');
+    const uploadLabel = document.querySelector('.file-upload label'); // Target the label element
+    const progressBarContainer = document.querySelector('.progress-bar-container'); // Target the progress bar container
+
+    // Hide submit and file upload buttons
+    if (submitButton) {
+        console.log('Hiding submit button');
+        submitButton.style.display = 'none';
+    }
+    if (fileInput) {
+        console.log('Hiding file input');
+        fileInput.style.display = 'none';
+    }
+    if (uploadLabel) {
+        console.log('Hiding upload label (blue button)');
+        uploadLabel.style.display = 'none'; // Hide the label (blue button)
+    }
+    if (progressBarContainer) {
+        console.log('Hiding progress bar container');
+        progressBarContainer.style.display = 'none'; // Hide the progress bar
+    }
+
+    // Populate form fields with last submission data
+    populateForm(lastSubmission.id);
+
+    // Disable all form fields
+    const formFields = form.querySelectorAll('input, textarea, select');
+    formFields.forEach(field => {
+        field.disabled = true;
+    });
+
+    // Show a message indicating the form is locked
+    const messageElement = document.getElementById('message');
+    if (messageElement) {
+        console.log('Showing locked form message');
+        messageElement.textContent = 'This form is locked because the last submission is still under review.';
+        messageElement.style.display = 'block';
+        messageElement.className = 'message info';
+        messageElement.style.animation = 'none'; // Remove any animations
+    }
+
+    // Ensure the file preview is visible but non-interactive
+    if (filePreview) {
+        console.log('Making file preview non-interactive');
+        filePreview.style.display = 'flex';
+        filePreview.style.pointerEvents = 'none';
+        filePreview.style.opacity = '0.7';
+    }
+}
+
+// Initialize the form for new submissions or "Needs revision" state
+function initializeForm() {
     const fileInput = document.getElementById('policy_document');
     const filePreview = document.getElementById('file-preview');
     const fileIcon = document.getElementById('file-icon');
@@ -14,6 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Create a single progress bar container
     const progressBarContainer = document.createElement('div');
     progressBarContainer.className = 'progress-bar-container';
+    progressBarContainer.style.display = 'none'; // Initially hide the progress bar
     const progressBar = document.createElement('div');
     progressBar.className = 'progress-bar';
     const progress = document.createElement('div');
@@ -42,6 +133,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 filePreview.style.display = 'flex';
                 uploadLabel.textContent = 'Change File';
 
+                // Show the progress bar
+                progressBarContainer.style.display = 'block';
+
                 // Reset progress bar
                 progress.style.width = '0%';
 
@@ -60,44 +154,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 filePreview.style.display = 'none';
                 uploadLabel.textContent = 'Upload Policy Document (PDF or Word)';
                 progress.style.width = '0%'; // Reset progress bar
-            }
-        });
-    }
-
-    // Fetch and populate roles if the form has a roles dropdown
-    const roleSelect = document.getElementById('role'); // For form2.html
-    const positionSelect = document.getElementById('position'); // For form3.html
-
-    if (roleSelect || positionSelect) {
-        fetchRoles().then(roles => {
-            if (roleSelect) {
-                populateDropdown(roleSelect, roles);
-            }
-            if (positionSelect) {
-                populateDropdown(positionSelect, roles);
+                progressBarContainer.style.display = 'none'; // Hide the progress bar
             }
         });
     }
 
     // Common form submission logic
     const form = document.querySelector('form');
-    const editButton = document.getElementById('editButton');
     const messageElement = document.getElementById('message');
 
-    if (form && editButton && messageElement) {
-        // Edit Button Logic
-        editButton.addEventListener('click', async () => {
-            const submissions = await fetchUserSubmissions();
-            if (submissions.length > 0) {
-                const selectedSubmission = await selectSubmission(submissions);
-                if (selectedSubmission) {
-                    await populateForm(selectedSubmission.id);
-                }
-            } else {
-                alert('No previous submissions found.');
-            }
-        });
-
+    if (form && messageElement) {
         // Form Submission Logic
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -110,11 +176,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const formData = new FormData(e.target);
             const userId = localStorage.getItem('userId');
-            const submissionId = document.getElementById('submissionId').value;
 
             try {
-                const endpoint = submissionId ? '/edit-form' : '/submit-form';
-                const response = await fetch(endpoint, {
+                const response = await fetch('/submit-form', {
                     method: 'POST',
                     headers: {
                         'User-ID': userId
@@ -124,17 +188,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await response.json();
                 if (result.success) {
                     // Show success animation
-                    messageElement.textContent = submissionId ? 'Form updated successfully!' : 'Form submitted successfully!';
+                    messageElement.textContent = 'Form submitted successfully!';
                     messageElement.style.display = 'block';
                     messageElement.className = 'message success';
                     messageElement.style.animation = 'bounceIn 0.5s ease-out';
 
+                    // Lock the form after successful submission
+                    const lastSubmission = await fetchLastSubmission(document.getElementById('formName').value);
+                    if (lastSubmission) {
+                        lockForm(lastSubmission);
+                    }
+
                     // Reset form after submission
                     form.reset();
-                    document.getElementById('submissionId').value = '';
                     if (fileNameSpan) fileNameSpan.textContent = 'No file selected';
                     if (filePreview) filePreview.style.display = 'none';
-                    if (uploadLabel) uploadLabel.textContent = 'Upload Policy Document (PDF or Word)';
+                    if (uploadLabel) uploadLabel.style.display = 'none'; // Hide the label (blue button)
+                    if (progressBarContainer) progressBarContainer.style.display = 'none'; // Hide the progress bar
                     progress.style.width = '0%'; // Reset progress bar
 
                     // Hide the message after 3 seconds
@@ -167,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-});
+}
 
 // Common function to fetch user submissions
 async function fetchUserSubmissions() {
@@ -176,33 +246,6 @@ async function fetchUserSubmissions() {
         headers: { 'User-ID': localStorage.getItem('userId') }
     });
     return await response.json();
-}
-
-// Common function to select a submission
-async function selectSubmission(submissions) {
-    const options = submissions.map(s => `<option value="${s.id}">${s.policy_title || s.role || s.employee_name || s.asset_id || s.control_type || s.location || s.system_application || s.incident_description || s.project_name || s.supplier_name || s.incident_id || s.test_objective || s.legislation_regulation} (${new Date(s.submission_time).toLocaleString()})</option>`).join('');
-    const result = await new Promise(resolve => {
-        const dialog = document.createElement('dialog');
-        dialog.innerHTML = `
-            <form method="dialog">
-                <h2>Select a submission to edit</h2>
-                <select name="submissionId">
-                    ${options}
-                </select>
-                <div>
-                    <button value="cancel">Cancel</button>
-                    <button value="confirm">Confirm</button>
-                </div>
-            </form>
-        `;
-        dialog.addEventListener('close', () => {
-            resolve(dialog.returnValue === 'confirm' ? { id: dialog.querySelector('select').value } : null);
-            dialog.remove();
-        });
-        document.body.appendChild(dialog);
-        dialog.showModal();
-    });
-    return result;
 }
 
 // Common function to populate form with submission data
@@ -219,7 +262,11 @@ async function populateForm(submissionId) {
         if (key !== 'id' && key !== 'file_name' && key !== 'submission_time') {
             const field = document.getElementById(key);
             if (field) {
-                field.value = submission[key];
+                if (key === 'review_status') {
+                    field.value = submission[key] || 'review'; // Default to 'review'
+                } else {
+                    field.value = submission[key];
+                }
             }
         }
     }

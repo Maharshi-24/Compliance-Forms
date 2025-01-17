@@ -2,4 +2,3 @@ node_modules/
 uploads/
 compliance.db
 package-lock.json
-package.json
