@@ -114,59 +114,63 @@ app.post('/submit-form', authenticateUser, upload.single('policy_document'), asy
     const userId = req.userId;
     const user = db.prepare('SELECT username FROM users WHERE id = ?').get(userId);
     if (!user) {
-        return res.status(400).json({ error: 'User not found' });
+      return res.status(400).json({ error: 'User not found' });
     }
     const submissionTime = new Date().toISOString();
 
     console.log('Received form submission:', formName, req.body);
     let query = '';
     switch (formName) {
-        case 'Information Security Policy Review':
-            const fileId = req.file ? path2.parse(req.file.filename).name : null;
-            const fileName = req.file ? req.file.originalname : null;
+      case 'Information Security Policy Review':
+        // Check if the submission is in "Needs revision" state
+        const existingSubmission = db.prepare('SELECT * FROM information_security_policy WHERE user_id = ? AND review_status = ?').get(userId, 'Needs revision');
+        if (existingSubmission) {
+          // If no new file is uploaded, retain the existing file ID and file name
+          const fileId = req.file ? path2.parse(req.file.filename).name : existingSubmission.file_id;
+          const fileName = req.file ? req.file.originalname : existingSubmission.file_name;
 
-            // Check if the submission is in "Needs revision" state
-            const existingSubmission = db.prepare('SELECT * FROM information_security_policy WHERE user_id = ? AND review_status = ?').get(userId, 'Needs revision');
-            if (existingSubmission) {
-                // Update the existing submission (do not change upload_date)
-                query = `
-                    UPDATE information_security_policy
-                    SET policy_title = ?, comments = ?, review_status = 'review', file_id = ?, file_name = ?, modified_on = ?, modified_by = ?
-                    WHERE id = ?
-                `;
-                db.prepare(query).run(
-                    req.body.policy_title,
-                    req.body.comments,
-                    fileId,
-                    fileName,
-                    submissionTime,
-                    user.username,
-                    existingSubmission.id
-                );
-            } else {
-                // Insert a new submission (set upload_date to the current submission time)
-                query = `
-                    INSERT INTO information_security_policy 
-                    (policy_title, review_date, upload_date, reviewed_by, review_status, comments, user_id, uploaded_by, submission_time, modified_on, modified_by, file_id, file_name)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                `;
-                db.prepare(query).run(
-                    req.body.policy_title,
-                    null, // review_date is set to null initially
-                    submissionTime, // upload_date is set to the current submission time
-                    '',
-                    'review',
-                    req.body.comments,
-                    userId,
-                    user.username,
-                    submissionTime,
-                    submissionTime,
-                    user.username,
-                    fileId,
-                    fileName
-                );
-            }
-            break;
+          // Update the existing submission (do not change upload_date)
+          query = `
+              UPDATE information_security_policy
+              SET policy_title = ?, comments = ?, review_status = 'review', file_id = ?, file_name = ?, modified_on = ?, modified_by = ?
+              WHERE id = ?
+          `;
+          db.prepare(query).run(
+            req.body.policy_title,
+            req.body.comments,
+            fileId,
+            fileName,
+            submissionTime,
+            user.username,
+            existingSubmission.id
+          );
+        } else {
+          // Insert a new submission (set upload_date to the current submission time)
+          const fileId = req.file ? path2.parse(req.file.filename).name : null;
+          const fileName = req.file ? req.file.originalname : null;
+
+          query = `
+              INSERT INTO information_security_policy 
+              (policy_title, review_date, upload_date, reviewed_by, review_status, comments, user_id, uploaded_by, submission_time, modified_on, modified_by, file_id, file_name)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `;
+          db.prepare(query).run(
+            req.body.policy_title,
+            null, // review_date is set to null initially
+            submissionTime, // upload_date is set to the current submission time
+            '',
+            'review',
+            req.body.comments,
+            userId,
+            user.username,
+            submissionTime,
+            submissionTime,
+            user.username,
+            fileId,
+            fileName
+          );
+        }
+        break;
 
       case 'Information Security Roles':
         const fileIdRoles = path2.parse(req.file.filename).name;
