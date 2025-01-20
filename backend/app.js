@@ -3,7 +3,6 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import db from './database.js';
-import fs from 'fs/promises';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import multer from 'multer';
