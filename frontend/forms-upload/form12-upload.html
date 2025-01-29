@@ -3,94 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Information Security Incident Management</title>
+    <title>Incident Response Report</title>
     <link rel="stylesheet" type="text/css" href="../css/forms.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-brand">INOXCVA</div>
-        <div class="navbar-links">
-            <a href="/" class="nav-link">Home</a>
-            <a href="/extract-data.html" class="nav-link">Extract Data</a>
-        </div>
-    </nav>
+<nav class="navbar">
+    <div class="navbar-brand">INOXCVA</div>
+    <div class="navbar-links">
+        <a href="/" class="nav-link">Home</a>
+        <a href="../extract-data.html" class="nav-link">Extract Data</a>
+    </div>
+</nav>
 
 <div class="container">
-    <h1>Information Security Incident Management</h1>
-    <button id="editButton">Edit Previous Submission</button>
+    <h1>Incident Response Report</h1>
     <form id="form12" enctype="multipart/form-data">
         <input type="hidden" id="submissionId" name="submissionId">
-        <input type="hidden" id="formName" name="formName" value="Information Security Incident Management">
-        
+        <input type="hidden" id="formName" name="formName" value="Incident Response Report">
+
+        <!-- Policy Title -->
         <div class="form-group">
-            <label for="incident_id">Incident ID:</label>
-            <input type="text" id="incident_id" name="incident_id" required>
+            <label for="policy_title">Policy Title:</label>
+            <input type="text" id="policy_title" name="policy_title" required>
         </div>
 
-        <div class="form-group">
-            <label for="date_of_incident">Date of Incident:</label>
-            <input type="date" id="date_of_incident" name="date_of_incident" required>
-        </div>
-
-        <div class="form-group">
-            <label for="incident_description">Incident Description:</label>
-            <textarea id="incident_description" name="incident_description" rows="4" required></textarea>
-        </div>
-
-        <div class="form-group">
-            <label for="severity">Severity:</label>
-            <select id="severity" name="severity" required>
-                <option value="">Select</option>
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="impact_assessment">Impact Assessment:</label>
-            <textarea id="impact_assessment" name="impact_assessment" rows="4" required></textarea>
-        </div>
-
-        <div class="form-group">
-            <label for="actions_taken">Actions Taken:</label>
-            <textarea id="actions_taken" name="actions_taken" rows="4" required></textarea>
-        </div>
-
-        <div class="form-group">
-            <label for="resolution_date">Resolution Date:</label>
-            <input type="date" id="resolution_date" name="resolution_date" required>
-        </div>
-
-        <div class="form-group">
-            <label for="incident_handled_by">Incident Handled By:</label>
-            <input type="text" id="incident_handled_by" name="incident_handled_by" required>
-        </div>
-
-        <div class="form-group">
-            <label for="post_incident_review_date">Post-Incident Review Date:</label>
-            <input type="date" id="post_incident_review_date" name="post_incident_review_date" required>
-        </div>
-
-        <div class="form-group">
-            <label for="root_cause_analysis">Root Cause Analysis Conducted:</label>
-            <select id="root_cause_analysis" name="root_cause_analysis" required>
-                <option value="">Select</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="incident_response">Incident Response:</label>
-            <textarea id="incident_response" name="incident_response" rows="4" required></textarea>
-        </div>
-
-        <!-- Updated File Upload Section -->
+        <!-- File Upload Section -->
         <div class="form-group file-upload">
             <label for="policy_document">
-                <span id="upload-label">Upload Incident Document (PDF or Word)</span>
+                <span id="upload-label">Upload Policy Document (PDF or Word)</span>
                 <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
             </label>
             <div id="file-preview" class="file-preview" style="display: none;">
@@ -99,12 +40,18 @@
             </div>
         </div>
 
-        <button type="submit">Submit Incident Report</button>
+        <!-- Comments -->
+        <div class="form-group">
+            <label for="comments">Comments:</label>
+            <textarea id="comments" name="comments" rows="4"></textarea>
+        </div>
+
+        <button type="submit">Submit Changes</button>
     </form>
 
     <div id="message" class="message" style="display: none;"></div>
 </div>
 
-<script src="../scripts/forms.js"></script>
+<script src="../scripts/forms-upload.js"></script>
 </body>
 </html>
