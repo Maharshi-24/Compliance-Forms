@@ -75,6 +75,7 @@ if (form && messageElement) {
         const userId = localStorage.getItem('userId');
         const username = localStorage.getItem('username');
         const submissionId = document.getElementById('submissionId').value;
+        const formName = document.getElementById('formName').value; // Get the form name from the hidden input
 
         // Automatically set the review date to the current date
         const reviewDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
@@ -89,7 +90,8 @@ if (form && messageElement) {
         };
 
         try {
-            const response = await fetch(`/api/update-submission/${submissionId}`, {
+            // Update the API endpoint to include the table name
+            const response = await fetch(`/api/update-submission/${formName}/${submissionId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
