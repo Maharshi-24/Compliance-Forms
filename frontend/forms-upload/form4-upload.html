@@ -3,88 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asset Management</title>
+    <title>Asset Inventory</title>
     <link rel="stylesheet" type="text/css" href="../css/forms.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-brand">INOXCVA</div>
-        <div class="navbar-links">
-            <a href="/" class="nav-link">Home</a>
-            <a href="/extract-data.html" class="nav-link">Extract Data</a>
-        </div>
-    </nav>
-
-    <div class="container">
-        <h1>Asset Management</h1>
-        <button id="editButton">Edit Previous Submission</button>
-        <form id="form4" enctype="multipart/form-data">
-            <input type="hidden" id="submissionId" name="submissionId">
-            <input type="hidden" id="formName" name="formName" value="Asset Management">
-            <div class="form-group">
-                <label for="asset_id">Asset ID:</label>
-                <input type="text" id="asset_id" name="asset_id" required>
-            </div>
-            <div class="form-group">
-                <label for="asset_type">Asset Type:</label>
-                <input type="text" id="asset_type" name="asset_type" required>
-            </div>
-            <div class="form-group">
-                <label for="owner">Owner:</label>
-                <input type="text" id="owner" name="owner" required>
-            </div>
-            <div class="form-group">
-                <label for="classification">Classification:</label>
-                <select id="classification" name="classification" required>
-                    <option value="Public">Public</option>
-                    <option value="Private">Private</option>
-                    <option value="Confidential">Confidential</option>
-                    <option value="Restricted">Restricted</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="location">Location:</label>
-                <input type="text" id="location" name="location" required>
-            </div>
-            <div class="form-group">
-                <label for="date_added">Date Added:</label>
-                <input type="date" id="date_added" name="date_added" required>
-            </div>
-            <div class="form-group">
-                <label for="end_of_life">End of Life:</label>
-                <input type="date" id="end_of_life" name="end_of_life">
-            </div>
-            <div class="form-group">
-                <label for="status">Status:</label>
-                <select id="status" name="status" required>
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                    <option value="Maintenance">Maintenance</option>
-                    <option value="Disposal">Disposal</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="comments">Comments:</label>
-                <textarea id="comments" name="comments"></textarea>
-            </div>
-
-            <!-- File Upload Section -->
-            <div class="form-group file-upload">
-                <label for="policy_document">
-                    <span id="upload-label">Upload Policy Document (PDF or Word)</span>
-                    <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
-                </label>
-                <div id="file-preview" class="file-preview" style="display: none;">
-                    <img id="file-icon" src="" alt="File Icon">
-                    <span id="file-name">No file selected</span>
-                </div>
-            </div>
-
-            <button type="submit">Submit</button>
-        </form>
-        <div id="message" class="message" style="display: none;"></div>
+<nav class="navbar">
+    <div class="navbar-brand">INOXCVA</div>
+    <div class="navbar-links">
+        <a href="/" class="nav-link">Home</a>
+        <a href="../extract-data.html" class="nav-link">Extract Data</a>
     </div>
-    <script src="../scripts/forms.js"></script>
+</nav>
+
+<div class="container">
+    <h1>Asset Inventory</h1>
+    <form id="form4" enctype="multipart/form-data">
+        <input type="hidden" id="submissionId" name="submissionId">
+        <input type="hidden" id="formName" name="formName" value="Asset Inventory">
+
+        <!-- Policy Title -->
+        <div class="form-group">
+            <label for="policy_title">Policy Title:</label>
+            <input type="text" id="policy_title" name="policy_title" required>
+        </div>
+
+        <!-- File Upload Section -->
+        <div class="form-group file-upload">
+            <label for="policy_document">
+                <span id="upload-label">Upload Policy Document (PDF or Word)</span>
+                <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
+            </label>
+            <div id="file-preview" class="file-preview" style="display: none;">
+                <img id="file-icon" src="" alt="File Icon">
+                <span id="file-name">No file selected</span>
+            </div>
+        </div>
+
+        <!-- Comments -->
+        <div class="form-group">
+            <label for="comments">Comments:</label>
+            <textarea id="comments" name="comments" rows="4"></textarea>
+        </div>
+
+        <button type="submit">Submit Changes</button>
+    </form>
+
+    <div id="message" class="message" style="display: none;"></div>
+</div>
+
+<script src="../scripts/forms-upload.js"></script>
 </body>
 </html>

@@ -35,6 +35,12 @@ function populateForm(submission) {
 
     document.getElementById('submissionId').value = submission.id;
     document.getElementById('policy_title').value = submission.policy_title;
+    document.getElementById('uploaded_by').value = submission.uploaded_by || 'N/A';
+
+    // Extract only the date part from modified_on
+    const modifiedDate = submission.modified_on ? submission.modified_on.split('T')[0] : 'N/A';
+    document.getElementById('modified_on').value = modifiedDate;
+
     document.getElementById('comments').value = submission.comments;
 
     // Handle file preview
@@ -58,7 +64,7 @@ function populateForm(submission) {
     }
 }
 
-// Form submission logic
+// Form submission logic    
 const form = document.querySelector('form');
 const messageElement = document.getElementById('message');
 
@@ -75,6 +81,7 @@ if (form && messageElement) {
         const userId = localStorage.getItem('userId');
         const username = localStorage.getItem('username');
         const submissionId = document.getElementById('submissionId').value;
+        const formName = document.getElementById('formName').value; // Get the form name from the hidden input
 
         // Automatically set the review date to the current date
         const reviewDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
@@ -89,7 +96,8 @@ if (form && messageElement) {
         };
 
         try {
-            const response = await fetch(`/api/update-submission/${submissionId}`, {
+            // Update the API endpoint to include the table name
+            const response = await fetch(`/api/update-submission/${formName}/${submissionId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

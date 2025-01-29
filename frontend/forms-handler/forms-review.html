@@ -27,98 +27,98 @@
         </div>
 
         <div class="grid">
-            <div class="card">
+            <div class="card" data-form-name="Information Security Policy Review">
                 <a href="../forms-review/form1-review.html">
                     <h3>Information Security Policy Review</h3>
                     <p>Review and update the information security policy.</p>
                     <span class="last-added"></span>
                 </a>
             </div>
-            <div class="card">
+            <div class="card" data-form-name="Information Security Roles and Responsibilities">
                 <a href="../forms-review/form2-review.html">
                     <h3>Information Security Roles</h3>
                     <p>Define and manage information security roles.</p>
                     <span class="last-added"></span>
                 </a>
             </div>
-            <div class="card">
+            <div class="card" data-form-name="Employee Screening and Training Record">
                 <a href="../forms-review/form3-review.html">
                     <h3>Employee Screening and Training</h3>
                     <p>Ensure employees are screened and trained properly.</p>
                     <span class="last-added"></span>
                 </a>
             </div>
-            <div class="card">
+            <div class="card" data-form-name="Asset Inventory">
                 <a href="../forms-review/form4-review.html">
                     <h3>Asset Management</h3>
                     <p>Manage and protect organizational assets.</p>
                     <span class="last-added"></span>
                 </a>
             </div>
-            <div class="card">
+            <div class="card" data-form-name="Access Control Request">
                 <a href="../forms-review/form5-review.html">
                     <h3>Access Control</h3>
                     <p>Control access to information and systems.</p>
                     <span class="last-added"></span>
                 </a>
             </div>
-            <div class="card">
+            <div class="card" data-form-name="Cryptographic Control Use">
                 <a href="../forms-review/form6-review.html">
                     <h3>Cryptographic Controls</h3>
                     <p>Implement cryptographic controls for data protection.</p>
                     <span class="last-added"></span>
                 </a>
             </div>
-            <div class="card">
+            <div class="card" data-form-name="Physical Security Checklist">
                 <a href="../forms-review/form7-review.html">
                     <h3>Physical Security</h3>
                     <p>Ensure physical security measures are in place.</p>
                     <span class="last-added"></span>
                 </a>
             </div>
-            <div class="card">
+            <div class="card" data-form-name="Operations Security Log">
                 <a href="../forms-review/form8-review.html">
                     <h3>Operations Security</h3>
                     <p>Maintain security in operational processes.</p>
                     <span class="last-added"></span>
                 </a>
             </div>
-            <div class="card">
+            <div class="card" data-form-name="Network Security Incident Log">
                 <a href="../forms-review/form9-review.html">
                     <h3>Communications Security</h3>
                     <p>Secure communication channels and information.</p>
                     <span class="last-added"></span>
                 </a>
             </div>
-            <div class="card">
+            <div class="card" data-form-name="Secure Development Checklist">
                 <a href="../forms-review/form10-review.html">
                     <h3>Development Checklist</h3>
                     <p>Ensure secure development practices.</p>
                     <span class="last-added"></span>
                 </a>
             </div>
-            <div class="card">
+            <div class="card" data-form-name="Supplier Security Assessment">
                 <a href="../forms-review/form11-review.html">
                     <h3>Supplier Assessments</h3>
                     <p>Assess and manage supplier security.</p>
                     <span class="last-added"></span>
                 </a>
             </div>
-            <div class="card">
+            <div class="card" data-form-name="Incident Response Report">
                 <a href="../forms-review/form12-review.html">
                     <h3>Incident Responses</h3>
                     <p>Manage and respond to security incidents.</p>
                     <span class="last-added"></span>
                 </a>
             </div>
-            <div class="card">
+            <div class="card" data-form-name="Business Continuity Plan Testing Log">
                 <a href="../forms-review/form13-review.html">
                     <h3>Business Continuity</h3>
                     <p>Ensure business continuity and disaster recovery.</p>
                     <span class="last-added"></span>
                 </a>
             </div>
-            <div class="card">
+            <div class="card" data-form-name="Legal and Regulatory Compliance Checklist">
                 <a href="../forms-review/form14-review.html">
                     <h3>Compliance Checklist</h3>
                     <p>Ensure compliance with ISO 27001 standards.</p>
@@ -126,6 +126,7 @@
                 </a>
             </div>
         </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -138,25 +139,11 @@
                 document.getElementById('userInfo').textContent = `Welcome, ${username}!`;
             }
 
-            // Fetch last submission date for each form
-            const forms = [
-                'Information Security Policy Review',
-                'Information Security Roles',
-                'Employee Screening and Training',
-                'Asset Management',
-                'Access Control',
-                'Cryptographic Controls',
-                'Physical Security',
-                'Operations Security Log',
-                'Communications Security',
-                'System Acquisition, Development, and Maintenance',
-                'Supplier Relationships',
-                'Information Security Incident Management',
-                'Business Continuity Management',
-                'Compliance'
-            ];
+            // Fetch last submission status for each form
+            const cards = document.querySelectorAll('.card');
 
-            forms.forEach((formName, index) => {
+            cards.forEach((card) => {
+                const formName = card.getAttribute('data-form-name');
                 fetch(`/api/last-submission/${encodeURIComponent(formName)}`, {
                     headers: {
                         'User-ID': userId
@@ -164,11 +151,16 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data && data.submission_time) {
-                        const lastAddedElements = document.querySelectorAll('.last-added');
-                        if (lastAddedElements[index]) {
-                            lastAddedElements[index].textContent = `Last added: ${new Date(data.submission_time).toLocaleString()}`;
+                    if (data && data.review_status === 'review') {
+                        card.style.display = 'block';
+                        if (data.submission_time) {
+                            const lastAddedElement = card.querySelector('.last-added');
+                            if (lastAddedElement) {
+                                lastAddedElement.textContent = `Last added: ${new Date(data.submission_time).toLocaleString()}`;
+                            }
                         }
+                    } else {
+                        card.style.display = 'none';
                     }
                 })
                 .catch(error => console.error('Error fetching last submission:', error));
