@@ -3,101 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Access Control</title>
+    <title>Access Control Request</title>
     <link rel="stylesheet" type="text/css" href="../css/forms.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-brand">INOXCVA</div>
-        <div class="navbar-links">
-            <a href="/" class="nav-link">Home</a>
-            <a href="/extract-data.html" class="nav-link">Extract Data</a>
-        </div>
-    </nav>
-
-    <div class="container">
-        <h1>Access Control</h1>
-        <button id="editButton">Edit Previous Submission</button>
-        <form id="form5" enctype="multipart/form-data">
-            <input type="hidden" id="submissionId" name="submissionId">
-            <input type="hidden" id="formName" name="formName" value="Access Control">
-            <div class="form-group">
-                <label for="employee_name">Employee Name:</label>
-                <input type="text" id="employee_name" name="employee_name" required>
-            </div>
-            <div class="form-group">
-                <label for="department">Department:</label>
-                <input type="text" id="department" name="department" required>
-            </div>
-            <div class="form-group">
-                <label for="access_requested">Access Requested:</label>
-                <input type="text" id="access_requested" name="access_requested" required>
-            </div>
-            <div class="form-group">
-                <label for="reason_for_access">Reason for Access:</label>
-                <textarea id="reason_for_access" name="reason_for_access" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="requested_by">Requested By:</label>
-                <input type="text" id="requested_by" name="requested_by" required>
-            </div>
-            <div class="form-group">
-                <label for="date_of_request">Date of Request:</label>
-                <input type="date" id="date_of_request" name="date_of_request" required>
-            </div>
-            <div class="form-group">
-                <label for="approved_by">Approved By:</label>
-                <input type="text" id="approved_by" name="approved_by">
-            </div>
-            <div class="form-group">
-                <label for="access_granted">Access Granted:</label>
-                <select id="access_granted" name="access_granted">
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                    <option value="Pending">Pending</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="access_start_date">Access Start Date:</label>
-                <input type="date" id="access_start_date" name="access_start_date" required>
-            </div>
-            <div class="form-group">
-                <label for="access_end_date">Access End Date:</label>
-                <input type="date" id="access_end_date" name="access_end_date" required>
-            </div>
-            <div class="form-group">
-                <label for="comments">Comments:</label>
-                <textarea id="comments" name="comments"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="type_of_access">Type of Access:</label>
-                <select id="type_of_access" name="type_of_access" required>
-                    <option value="Physical">Physical</option>
-                    <option value="Remote">Remote</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="access_duration">Access Duration:</label>
-                <input type="text" id="access_duration" name="access_duration" placeholder="e.g., 1 month, permanent">
-            </div>
-
-            <!-- File Upload Section -->
-            <div class="form-group file-upload">
-                <label for="policy_document">
-                    <span id="upload-label">Upload Policy Document (PDF or Word)</span>
-                    <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
-                </label>
-                <div id="file-preview" class="file-preview" style="display: none;">
-                    <img id="file-icon" src="" alt="File Icon">
-                    <span id="file-name">No file selected</span>
-                </div>
-            </div>
-
-            <button type="submit">Submit</button>
-        </form>
-        <div id="message" class="message" style="display: none;"></div>
+<nav class="navbar">
+    <div class="navbar-brand">INOXCVA</div>
+    <div class="navbar-links">
+        <a href="/" class="nav-link">Home</a>
+        <a href="../extract-data.html" class="nav-link">Extract Data</a>
     </div>
-    <script src="../scripts/forms.js"></script>
+</nav>
+
+<div class="container">
+    <h1>Access Control Request</h1>
+    <form id="form5" enctype="multipart/form-data">
+        <input type="hidden" id="submissionId" name="submissionId">
+        <input type="hidden" id="formName" name="formName" value="Access Control Request">
+
+        <!-- Policy Title -->
+        <div class="form-group">
+            <label for="policy_title">Policy Title:</label>
+            <input type="text" id="policy_title" name="policy_title" required>
+        </div>
+
+        <!-- File Upload Section -->
+        <div class="form-group file-upload">
+            <label for="policy_document">
+                <span id="upload-label">Upload Policy Document (PDF or Word)</span>
+                <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
+            </label>
+            <div id="file-preview" class="file-preview" style="display: none;">
+                <img id="file-icon" src="" alt="File Icon">
+                <span id="file-name">No file selected</span>
+            </div>
+        </div>
+
+        <!-- Comments -->
+        <div class="form-group">
+            <label for="comments">Comments:</label>
+            <textarea id="comments" name="comments" rows="4"></textarea>
+        </div>
+
+        <button type="submit">Submit Changes</button>
+    </form>
+
+    <div id="message" class="message" style="display: none;"></div>
+</div>
+
+<script src="../scripts/forms-upload.js"></script>
 </body>
 </html>
