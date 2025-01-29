@@ -143,6 +143,24 @@ app.post('/submit-form', authenticateUser, upload.single('policy_document'), asy
       case 'Operations Security Log':
         tableName = 'operations_security_log';
         break;
+      case 'Network Security Incident Log':
+        tableName = 'network_security_incident_log';
+        break;
+      case 'Secure Development Checklist':
+        tableName = 'secure_development_checklist';
+        break;
+      case 'Supplier Security Assessment':
+        tableName = 'supplier_security_assessment';
+        break;
+      case 'Incident Response Report':
+        tableName = 'incident_response_report';
+        break;
+      case 'Business Continuity Plan Testing Log':
+        tableName = 'business_continuity_plan_testing_log';
+        break;
+      case 'Legal and Regulatory Compliance Checklist':
+        tableName = 'legal_regulatory_compliance_checklist';
+        break;
       default:
         return res.status(400).json({ error: 'Invalid form name' });
     }
@@ -277,9 +295,28 @@ app.get('/api/user-submissions', authenticateUser, async (req, res) => {
       case 'Operations Security Log':
         query = 'SELECT id, policy_title, submission_time FROM operations_security_log WHERE user_id = ?';
         break;
+      case 'Network Security Incident Log':
+        query = 'SELECT id, policy_title, submission_time FROM network_security_incident_log WHERE user_id = ?';
+        break;
+      case 'Secure Development Checklist':
+        query = 'SELECT id, policy_title, submission_time FROM secure_development_checklist WHERE user_id = ?';
+        break;
+      case 'Supplier Security Assessment':
+        query = 'SELECT id, policy_title, submission_time FROM supplier_security_assessment WHERE user_id = ?';
+        break;
+      case 'Incident Response Report':
+        query = 'SELECT id, policy_title, submission_time FROM incident_response_report WHERE user_id = ?';
+        break;
+      case 'Business Continuity Plan Testing Log':
+        query = 'SELECT id, policy_title, submission_time FROM business_continuity_plan_testing_log WHERE user_id = ?';
+        break;
+      case 'Legal and Regulatory Compliance Checklist':
+        query = 'SELECT id, policy_title, submission_time FROM legal_regulatory_compliance_checklist WHERE user_id = ?';
+        break;
       default:
         return res.status(400).json({ error: 'Invalid form name' });
     }
+
 
     const submissions = db.prepare(query).all(userId);
     res.json(submissions);
@@ -319,6 +356,24 @@ app.get('/api/submission/:formName/:id', authenticateUser, async (req, res) => {
         break;
       case 'Operations Security Log':
         query = 'SELECT * FROM operations_security_log WHERE id = ? AND user_id = ?';
+        break;
+      case 'Network Security Incident Log':
+        query = 'SELECT * FROM network_security_incident_log WHERE id = ? AND user_id = ?';
+        break;
+      case 'Secure Development Checklist':
+        query = 'SELECT * FROM secure_development_checklist WHERE id = ? AND user_id = ?';
+        break;
+      case 'Supplier Security Assessment':
+        query = 'SELECT * FROM supplier_security_assessment WHERE id = ? AND user_id = ?';
+        break;
+      case 'Incident Response Report':
+        query = 'SELECT * FROM incident_response_report WHERE id = ? AND user_id = ?';
+        break;
+      case 'Business Continuity Plan Testing Log':
+        query = 'SELECT * FROM business_continuity_plan_testing_log WHERE id = ? AND user_id = ?';
+        break;
+      case 'Legal and Regulatory Compliance Checklist':
+        query = 'SELECT * FROM legal_regulatory_compliance_checklist WHERE id = ? AND user_id = ?';
         break;
       default:
         return res.status(400).json({ error: 'Invalid form name' });
@@ -381,6 +436,24 @@ app.get('/api/last-submission/:formName', authenticateUser, async (req, res) => 
       case 'Operations Security Log':
         query = 'SELECT * FROM operations_security_log ORDER BY submission_time DESC LIMIT 1';
         break;
+      case 'Network Security Incident Log':
+        query = 'SELECT * FROM network_security_incident_log ORDER BY submission_time DESC LIMIT 1';
+        break;
+      case 'Secure Development Checklist':
+        query = 'SELECT * FROM secure_development_checklist ORDER BY submission_time DESC LIMIT 1';
+        break;
+      case 'Supplier Security Assessment':
+        query = 'SELECT * FROM supplier_security_assessment ORDER BY submission_time DESC LIMIT 1';
+        break;
+      case 'Incident Response Report':
+        query = 'SELECT * FROM incident_response_report ORDER BY submission_time DESC LIMIT 1';
+        break;
+      case 'Business Continuity Plan Testing Log':
+        query = 'SELECT * FROM business_continuity_plan_testing_log ORDER BY submission_time DESC LIMIT 1';
+        break;
+      case 'Legal and Regulatory Compliance Checklist':
+        query = 'SELECT * FROM legal_regulatory_compliance_checklist ORDER BY submission_time DESC LIMIT 1';
+        break;
       default:
         return res.status(400).json({ error: 'Invalid form name' });
     }
@@ -423,6 +496,24 @@ app.put('/api/update-submission/:formName/:id', authenticateUser, async (req, re
         break;
       case 'Operations Security Log':
         tableName = 'operations_security_log';
+        break;
+      case 'Network Security Incident Log':
+        tableName = 'network_security_incident_log';
+        break;
+      case 'Secure Development Checklist':
+        tableName = 'secure_development_checklist';
+        break;
+      case 'Supplier Security Assessment':
+        tableName = 'supplier_security_assessment';
+        break;
+      case 'Incident Response Report':
+        tableName = 'incident_response_report';
+        break;
+      case 'Business Continuity Plan Testing Log':
+        tableName = 'business_continuity_plan_testing_log';
+        break;
+      case 'Legal and Regulatory Compliance Checklist':
+        tableName = 'legal_regulatory_compliance_checklist';
         break;
       default:
         return res.status(400).json({ error: 'Invalid form name' });
