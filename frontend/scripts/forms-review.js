@@ -35,6 +35,12 @@ function populateForm(submission) {
 
     document.getElementById('submissionId').value = submission.id;
     document.getElementById('policy_title').value = submission.policy_title;
+    document.getElementById('uploaded_by').value = submission.uploaded_by || 'N/A';
+
+    // Extract only the date part from modified_on
+    const modifiedDate = submission.modified_on ? submission.modified_on.split('T')[0] : 'N/A';
+    document.getElementById('modified_on').value = modifiedDate;
+
     document.getElementById('comments').value = submission.comments;
 
     // Handle file preview
