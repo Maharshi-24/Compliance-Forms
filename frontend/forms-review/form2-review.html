@@ -25,19 +25,17 @@
         <!-- Policy Title -->
         <div class="form-group">
             <label for="policy_title">Policy Title:</label>
-            <input type="text" id="policy_title" name="policy_title" required>
+            <input type="text" id="policy_title" name="policy_title" readonly>
         </div>
 
-        <!-- File Upload Section -->
-        <div class="form-group file-upload">
-            <label for="policy_document">
-                <span id="upload-label">Upload Policy Document (PDF or Word)</span>
-                <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
-            </label>
-            <div id="file-preview" class="file-preview" style="display: none;">
-                <img id="file-icon" src="" alt="File Icon">
-                <span id="file-name">No file selected</span>
-            </div>
+        <!-- Review Status Dropdown -->
+        <div class="form-group">
+            <label for="review_status">Review Status:</label>
+            <select id="review_status" name="review_status" required>
+                <option value="Needs revision">Needs revision</option>
+                <option value="Approve">Approve</option>
+                <option value="Reject">Reject</option>
+            </select>
         </div>
 
         <!-- Comments -->
@@ -46,12 +44,20 @@
             <textarea id="comments" name="comments" rows="4"></textarea>
         </div>
 
-        <button type="submit">Submit Changes</button>
+        <!-- File Preview (Non-editable) -->
+        <div class="form-group file-upload">
+            <div id="file-preview" class="file-preview" style="display: none;">
+                <img id="file-icon" src="" alt="File Icon">
+                <span id="file-name">No file selected</span>
+            </div>
+        </div>
+
+        <button type="submit">Submit Review</button>
     </form>
 
     <div id="message" class="message" style="display: none;"></div>
 </div>
 
-<script src="../scripts/forms-upload.js"></script>
+<script src="../scripts/forms-review.js"></script>
 </body>
 </html>
