@@ -58,7 +58,7 @@ function populateForm(submission) {
     }
 }
 
-// Form submission logic
+// Form submission logic    
 const form = document.querySelector('form');
 const messageElement = document.getElementById('message');
 
