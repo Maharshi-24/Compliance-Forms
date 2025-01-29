@@ -166,59 +166,103 @@ db.exec(`
     
     CREATE TABLE IF NOT EXISTS network_security_incident_log (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        incident_description TEXT,
-        incident_date TEXT,
-        reported_by TEXT,
-        resolution_status TEXT,
+        policy_title TEXT,
+        review_date TEXT, 
+        upload_date TEXT, 
+        reviewed_by TEXT,
+        review_status TEXT DEFAULT 'review',
         comments TEXT,
+        user_id TEXT,
+        uploaded_by TEXT,
+        submission_time TEXT,
+        modified_on TEXT,
+        modified_by TEXT,
+        file_name TEXT,
         file_id TEXT UNIQUE
     );
 
     CREATE TABLE IF NOT EXISTS secure_development_checklist (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        checklist_title TEXT,
-        review_date TEXT,
-        upload_date TEXT,
+        policy_title TEXT,
+        review_date TEXT, 
+        upload_date TEXT, 
         reviewed_by TEXT,
         review_status TEXT DEFAULT 'review',
         comments TEXT,
+        user_id TEXT,
+        uploaded_by TEXT,
+        submission_time TEXT,
+        modified_on TEXT,
+        modified_by TEXT,
+        file_name TEXT,
         file_id TEXT UNIQUE
     );
 
     CREATE TABLE IF NOT EXISTS supplier_security_assessment (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        supplier_name TEXT,
-        assessment_date TEXT,
-        assessment_status TEXT,
+        policy_title TEXT,
+        review_date TEXT, 
+        upload_date TEXT, 
+        reviewed_by TEXT,
+        review_status TEXT DEFAULT 'review',
         comments TEXT,
+        user_id TEXT,
+        uploaded_by TEXT,
+        submission_time TEXT,
+        modified_on TEXT,
+        modified_by TEXT,
+        file_name TEXT,
         file_id TEXT UNIQUE
     );
 
     CREATE TABLE IF NOT EXISTS incident_response_report (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        incident_title TEXT,
-        response_date TEXT,
-        response_team TEXT,
-        response_status TEXT,
+        policy_title TEXT,
+        review_date TEXT, 
+        upload_date TEXT, 
+        reviewed_by TEXT,
+        review_status TEXT DEFAULT 'review',
         comments TEXT,
+        user_id TEXT,
+        uploaded_by TEXT,
+        submission_time TEXT,
+        modified_on TEXT,
+        modified_by TEXT,
+        file_name TEXT,
         file_id TEXT UNIQUE
     );
 
     CREATE TABLE IF NOT EXISTS business_continuity_plan_testing_log (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        test_date TEXT,
-        test_summary TEXT,
-        test_status TEXT,
+        policy_title TEXT,
+        review_date TEXT, 
+        upload_date TEXT, 
+        reviewed_by TEXT,
+        review_status TEXT DEFAULT 'review',
         comments TEXT,
+        user_id TEXT,
+        uploaded_by TEXT,
+        submission_time TEXT,
+        modified_on TEXT,
+        modified_by TEXT,
+        file_name TEXT,
         file_id TEXT UNIQUE
     );
 
     CREATE TABLE IF NOT EXISTS legal_regulatory_compliance_checklist (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        checklist_title TEXT,
-        compliance_date TEXT,
-        compliance_status TEXT,
+        policy_title TEXT,
+        review_date TEXT, 
+        upload_date TEXT, 
+        reviewed_by TEXT,
+        review_status TEXT DEFAULT 'review',
         comments TEXT,
+        user_id TEXT,
+        uploaded_by TEXT,
+        submission_time TEXT,
+        modified_on TEXT,
+        modified_by TEXT,
+        file_name TEXT,
         file_id TEXT UNIQUE
     );
   `);
