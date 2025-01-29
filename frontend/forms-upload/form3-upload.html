@@ -3,84 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Screening and Training</title>
+    <title>Employee Screening and Training Record</title>
     <link rel="stylesheet" type="text/css" href="../css/forms.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-brand">INOXCVA</div>
-        <div class="navbar-links">
-            <a href="/" class="nav-link">Home</a>
-            <a href="/extract-data.html" class="nav-link">Extract Data</a>
-        </div>
-    </nav>
-
-    <div class="container">
-        <h1>Employee Screening and Training</h1>
-        <button id="editButton">Edit Previous Submission</button>
-        <form id="form3" enctype="multipart/form-data">
-            <input type="hidden" id="submissionId" name="submissionId">
-            <input type="hidden" id="formName" name="formName" value="Employee Screening and Training">
-            <div class="form-group">
-                <label for="employee_name">Employee Name:</label>
-                <input type="text" id="employee_name" name="employee_name" required>
-            </div>
-            <div class="form-group">
-                <label for="employee_id">Employee ID:</label>
-                <input type="text" id="employee_id" name="employee_id" required>
-            </div>
-            <div class="form-group">
-                <label for="position">Position:</label>
-                <select id="position" name="position" required>
-                    <option value="">Select a position</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="screening_date">Screening Date:</label>
-                <input type="date" id="screening_date" name="screening_date" required>
-            </div>
-            <div class="form-group">
-                <label for="training_completed">Training Completed:</label>
-                <select id="training_completed" name="training_completed" required>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="training_date">Training Date:</label>
-                <input type="date" id="training_date" name="training_date">
-            </div>
-            <div class="form-group">
-                <label for="termination_date">Termination Date:</label>
-                <input type="date" id="termination_date" name="termination_date">
-            </div>
-            <div class="form-group">
-                <label for="training_status">Training Status:</label>
-                <select id="training_status" name="training_status" required>
-                    <option value="Pending">Pending</option>
-                    <option value="Completed">Completed</option>
-                    <option value="In Progress">In Progress</option>
-                </select>
-            </div>
-
-            <!-- File Upload Section -->
-            <div class="form-group file-upload">
-                <label for="policy_document">
-                    <span id="upload-label">Upload Policy Document (PDF or Word)</span>
-                    <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
-                </label>
-                <div id="file-preview" class="file-preview" style="display: none;">
-                    <img id="file-icon" src="" alt="File Icon">
-                    <span id="file-name">No file selected</span>
-                </div>
-            </div>
-
-            <button type="submit">Submit</button>
-        </form>
-        <div id="message" class="message" style="display: none;"></div>
+<nav class="navbar">
+    <div class="navbar-brand">INOXCVA</div>
+    <div class="navbar-links">
+        <a href="/" class="nav-link">Home</a>
+        <a href="../extract-data.html" class="nav-link">Extract Data</a>
     </div>
+</nav>
 
-    <script src="../scripts/forms.js"></script>
+<div class="container">
+    <h1>Employee Screening and Training Record</h1>
+    <form id="form3" enctype="multipart/form-data">
+        <input type="hidden" id="submissionId" name="submissionId">
+        <input type="hidden" id="formName" name="formName" value="Employee Screening and Training Record">
+
+        <!-- Policy Title -->
+        <div class="form-group">
+            <label for="policy_title">Policy Title:</label>
+            <input type="text" id="policy_title" name="policy_title" required>
+        </div>
+
+        <!-- File Upload Section -->
+        <div class="form-group file-upload">
+            <label for="policy_document">
+                <span id="upload-label">Upload Policy Document (PDF or Word)</span>
+                <input type="file" id="policy_document" name="policy_document" accept=".pdf,.doc,.docx">
+            </label>
+            <div id="file-preview" class="file-preview" style="display: none;">
+                <img id="file-icon" src="" alt="File Icon">
+                <span id="file-name">No file selected</span>
+            </div>
+        </div>
+
+        <!-- Comments -->
+        <div class="form-group">
+            <label for="comments">Comments:</label>
+            <textarea id="comments" name="comments" rows="4"></textarea>
+        </div>
+
+        <button type="submit">Submit Changes</button>
+    </form>
+
+    <div id="message" class="message" style="display: none;"></div>
+</div>
+
+<script src="../scripts/forms-upload.js"></script>
 </body>
 </html>
