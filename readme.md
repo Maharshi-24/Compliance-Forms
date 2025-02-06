@@ -1,6 +1,5 @@
 # 📋 [Compliance-Forms]
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-v18-green)](https://nodejs.org/)
 [![Express](https://img.shields.io/badge/Express-v4.x-blue)](https://expressjs.com/)
 [![SQLite](https://img.shields.io/badge/SQLite-v5.x-orange)](https://www.sqlite.org/index.html)
@@ -76,7 +75,7 @@ npm start
 ## 📖 Usage
 
 1. **🔑 Login / Sign Up**: Users must log in to access the system.
-2. **⬆️ Upload Policy**: Uploaders can submit new policies through predefined forms.
+2. **⬆️ Upload Policy**: Uploaders can submit changes in policies through predefined forms.
 3. **👀 Review Policy**: Reviewers evaluate policies and take actions (Approve, Reject, Request Revisions).
 4. **📚 View Policies**: Viewers can access approved policies.
 5. **📥 Extract Data**: Users can download policy details in XLSX format.
