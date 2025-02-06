@@ -1,20 +1,113 @@
-Run in termial:
-npm init
-npm install @hono/node-server better-sqlite3 hono xlsx nodemon
+### Compliance-Forms
 
-Paste this in package.json:
-  "scripts": {
-    "start": "node backend/server.js",
-    "dev": "nodemon backend/server.js"
-  },
+#### Overview
 
-Run in terminal:
-npm run dev
+Compliance-Forms is a web-based ISO 27001 policy management system that automates the policy submission, review, and approval process. The system ensures compliance by providing a structured workflow for managing policies, assigning user roles, and enabling data extraction and reporting in XLSX format.
 
-Paste this in browser localhost:2406
+---
 
-Technologies used:
-HTML, CSS, JAVASCRIPT, NODE.JS, HONO, SQLITE3
+#### Features
 
-To view tables open the forms.db file on this website:
-https://sqliteonline.com/
+- **User Authentication & Role Management**
+  - Users must log in before accessing the system.
+  - Three distinct roles: Viewer, Uploader, Reviewer.
+
+- **Form-Based Policy Submission**
+  - 14 different types of forms for ISO 27001 compliance.
+  - Uploaders can submit policy documents (PDF, Word, etc.).
+  - Multer is used for file uploads.
+
+- **Policy Review & Approval Workflow**
+  - Reviewers evaluate submitted policies.
+  - Actions: Approve, Reject, Request Revisions.
+
+- **Data Extraction & XLSX Export**
+  - Users can download structured reports in XLSX format.
+  - The xlsx library is used for data conversion.
+
+- **Backend & Database Management**
+  - Built using Node.js and Express.
+  - SQLite for policy storage.
+
+- **Future Scalability**
+  - Migration to MongoDB for better scalability.
+  - Deployment using Docker containers.
+  - Cloud hosting on AWS.
+
+---
+
+#### Technology Stack
+
+- **Frontend**: HTML, CSS, JavaScript
+- **Backend**: Node.js, Express
+- **Database**: SQLite (Future upgrade to MongoDB)
+- **Dependencies**: bcrypt, better-sqlite3, cors, multer, uuid, xlsx, nodemon
+
+---
+
+#### Installation
+
+##### Prerequisites
+- Ensure you have Node.js installed on your system.
+
+##### Steps to Install
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-repo/compliance-forms.git
+   cd compliance-forms
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+4. For production:
+   ```bash
+   npm start
+   ```
+
+---
+
+#### Usage
+
+1. **Login / Sign Up** - Users must log in to access the system.
+2. **Upload Policy** - Uploaders submit new policies through predefined forms.
+3. **Review Policy** - Reviewers evaluate and take necessary actions (Approve, Reject, Request Revisions).
+4. **View Policies** - Viewers can access approved policies.
+5. **Extract Data** - Users can download policy details in XLSX format.
+
+---
+
+#### User Roles & Permissions
+
+| **Role**   | **Permissions**                                                                 |
+|------------|---------------------------------------------------------------------------------|
+| Viewer     | Can view approved policies.                                                     |
+| Uploader   | Can create and submit policies for review.                                      |
+| Reviewer   | Can approve, reject, or request revisions for policies.                         |
+
+---
+
+#### Future Enhancements
+
+- Migrate to MongoDB for better database scalability.
+- Use Docker & AWS for cloud-based deployment.
+- Implement Advanced Security (MFA, enhanced JWT authentication).
+- Add Real-Time Notifications for policy updates.
+- Improve Mobile Compatibility for seamless access across devices.
+
+---
+
+#### Contact Information
+
+For inquiries, feature requests, or contributions, reach out via:
+
+- **Email**: [Your Email Here]
+- **GitHub**: [Your GitHub Link Here]
+- **LinkedIn**: [Your LinkedIn Profile Here]
+
+---
+\
