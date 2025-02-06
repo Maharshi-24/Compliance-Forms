@@ -105,25 +105,12 @@ We are committed to continuously improving **Your Project Name**. Here are some 
 
 ---
 
-## 🤝 Contributing
-
-Contributions are always welcome! If you'd like to contribute, please follow these steps:
-
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/YourFeatureName`).
-3. Commit your changes (`git commit -m "Add YourFeatureName"`).
-4. Push to the branch (`git push origin feature/YourFeatureName`).
-5. Open a pull request.
-
----
-
 ## 📞 Contact Information
 
 For inquiries, feature requests, or contributions, feel free to reach out:
 
-- **Email**: [Your Email Here]
-- **GitHub**: [Your GitHub Link Here]
-- **LinkedIn**: [Your LinkedIn Profile Here]
+- **Email**: maharshi2406@gmail.com
+- **LinkedIn**: https://www.linkedin.com/in/maharshi-desai-30143a279/
 
 ---
 
